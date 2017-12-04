@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.osgi.framework.FrameworkUtil;
@@ -274,7 +275,11 @@ public class BuildJobManager {
                 FilesUtils.copyFile(jobZipFile, jobFileTarget);
                 TimeMeasure.step(timeMeasureId, "Copy packaged file to target");
             } else {
-                throw new Exception(MAVEN_ERROR_MSG);
+                if (pMonitor != null && pMonitor.isCanceled()) {
+                    throw new OperationCanceledException(Messages.getString("BuildJobManager.operationCanceled"));
+                } else {
+                    throw new Exception(MAVEN_ERROR_MSG);
+                }
             }
             if (checkCompilationError) {
                 CorePlugin.getDefault().getRunProcessService().checkLastGenerationHasCompilationError(false);
