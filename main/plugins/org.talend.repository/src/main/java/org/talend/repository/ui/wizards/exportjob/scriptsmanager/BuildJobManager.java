@@ -205,13 +205,22 @@ public class BuildJobManager {
                         buildJobHandler.generateItemFiles(true, new SubProgressMonitor(wrMonitor, scale));
                         wrMonitor.worked(scale);
                         TimeMeasure.step(timeMeasureId, "generateItemFiles");
+                        if (wrMonitor.isCanceled()) {
+                            throw new OperationCanceledException(Messages.getString("BuildJobManager.operationCanceled"));
+                        }
 
                         buildJobHandler.generateJobFiles(new SubProgressMonitor(wrMonitor, scale));
                         wrMonitor.worked(scale);
                         TimeMeasure.step(timeMeasureId, "generateJobFiles");
+                        if (wrMonitor.isCanceled()) {
+                            throw new OperationCanceledException(Messages.getString("BuildJobManager.operationCanceled"));
+                        }
 
                         buildJobHandler.build(new SubProgressMonitor(wrMonitor, scale));
                         TimeMeasure.step(timeMeasureId, "build and package");
+                        if (wrMonitor.isCanceled()) {
+                            throw new OperationCanceledException(Messages.getString("BuildJobManager.operationCanceled"));
+                        }
                         wrMonitor.done();
                     } catch (Exception e) {
                         throw new CoreException(new org.eclipse.core.runtime.Status(IStatus.ERROR, FrameworkUtil.getBundle(
@@ -275,11 +284,7 @@ public class BuildJobManager {
                 FilesUtils.copyFile(jobZipFile, jobFileTarget);
                 TimeMeasure.step(timeMeasureId, "Copy packaged file to target");
             } else {
-                if (pMonitor != null && pMonitor.isCanceled()) {
-                    throw new OperationCanceledException(Messages.getString("BuildJobManager.operationCanceled"));
-                } else {
-                    throw new Exception(MAVEN_ERROR_MSG);
-                }
+                throw new Exception(MAVEN_ERROR_MSG);
             }
             if (checkCompilationError) {
                 CorePlugin.getDefault().getRunProcessService().checkLastGenerationHasCompilationError(false);
