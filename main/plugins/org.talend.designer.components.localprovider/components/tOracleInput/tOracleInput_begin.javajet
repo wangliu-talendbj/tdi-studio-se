@@ -141,7 +141,14 @@ imports="
 				while (rsGetTZ_<%=cid%>.next()) {
 					sessionTimezone_<%=cid%> = rsGetTZ_<%=cid%>.getString(1);
 				}
-				((oracle.jdbc.OracleConnection)conn_<%=cid%>).setSessionTimeZone(sessionTimezone_<%=cid%>);
+                                if (!(conn_<%=cid%> instanceof oracle.jdbc.OracleConnection) &&
+                                        conn_<%=cid%>.isWrapperFor(oracle.jdbc.OracleConnection.class)) {
+				    if (conn_<%=cid%>.unwrap(oracle.jdbc.OracleConnection.class) != null) {
+                                        ((oracle.jdbc.OracleConnection)conn_<%=cid%>.unwrap(oracle.jdbc.OracleConnection.class)).setSessionTimeZone(sessionTimezone_<%=cid%>);
+                                    }
+                                } else {
+                                    ((oracle.jdbc.OracleConnection)conn_<%=cid%>).setSessionTimeZone(sessionTimezone_<%=cid%>);
+                                }
 <%
 			}
 		}
@@ -156,7 +163,14 @@ imports="
 					while (rsGetTZ_<%=cid%>.next()) {
 						sessionTimezone_<%=cid%> = rsGetTZ_<%=cid%>.getString(1);
 					}
-					((oracle.jdbc.OracleConnection)conn_<%=cid%>).setSessionTimeZone(sessionTimezone_<%=cid%>);
+					if (!(conn_<%=cid%> instanceof oracle.jdbc.OracleConnection) &&
+                                                conn_<%=cid%>.isWrapperFor(oracle.jdbc.OracleConnection.class)) {
+				            if (conn_<%=cid%>.unwrap(oracle.jdbc.OracleConnection.class) != null) {
+                                                ((oracle.jdbc.OracleConnection)conn_<%=cid%>.unwrap(oracle.jdbc.OracleConnection.class)).setSessionTimeZone(sessionTimezone_<%=cid%>);
+                                            }
+                                        } else {
+                                            ((oracle.jdbc.OracleConnection)conn_<%=cid%>).setSessionTimeZone(sessionTimezone_<%=cid%>);
+                                        }
 				}
 			<%
 			}
