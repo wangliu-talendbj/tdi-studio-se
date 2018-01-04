@@ -328,6 +328,15 @@
       </ITEMS>
     </PARAMETER>
 
+   <PARAMETER
+           NAME="FIRE_TRIGGERS"
+           FIELD="CHECK"
+           SHOW="true"
+           NUM_ROW="11"
+   >
+       <DEFAULT>false</DEFAULT>
+   </PARAMETER>
+
     <PARAMETER
     	NAME="OUTPUT"
     	FIELD="CLOSED_LIST"
