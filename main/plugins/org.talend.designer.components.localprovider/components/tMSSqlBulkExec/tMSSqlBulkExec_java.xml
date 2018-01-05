@@ -331,7 +331,7 @@
    <PARAMETER
            NAME="FIRE_TRIGGERS"
            FIELD="CHECK"
-           SHOW="true"
+           SHOW_IF="ACTION=='INSERT'"
            NUM_ROW="11"
    >
        <DEFAULT>false</DEFAULT>
