@@ -337,15 +337,6 @@
 		<DEFAULT>false</DEFAULT>
 	</PARAMETER> 
 
-   <PARAMETER
-           NAME="FIRE_TRIGGERS"
-           FIELD="CHECK"
-           SHOW_IF="ACTION=='INSERT'"
-           NUM_ROW="11"
-   >
-       <DEFAULT>false</DEFAULT>
-   </PARAMETER>
-
     <PARAMETER
     	NAME="OUTPUT"
     	FIELD="CLOSED_LIST"
