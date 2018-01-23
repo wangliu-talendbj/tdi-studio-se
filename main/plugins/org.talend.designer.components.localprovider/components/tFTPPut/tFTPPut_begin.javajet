@@ -332,6 +332,7 @@ int nb_file_<%=cid%> = 0;
 				<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
 				ftp_<%=cid %>.login(<%=user %>, decryptedPassword_<%=cid%>);
+				ftp_<%=cid %>.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
 				ftp_<%=cid %>.execPROT(<%=protectionLevel %>);
 				ftp_<%=cid %>.execPBSZ(<%=protectionBufferSize %>);
 			} catch (Exception e) {
