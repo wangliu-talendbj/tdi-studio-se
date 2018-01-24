@@ -145,7 +145,7 @@ public class MavenJavaProcessor extends JavaProcessor {
         }
 
         if (Platform.OS_WIN32.equals(tp)) {
-            this.windowsClasspath = cpStr;
+            this.windowsClasspath = "'" + cpStr + "'";
         } else {
             this.unixClasspath = cpStr;
         }
