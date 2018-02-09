@@ -36,6 +36,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Status;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.runtime.utils.io.FileCopyUtils;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
@@ -253,6 +254,7 @@ public class JobJavaScriptOSGIForESBManager extends JobJavaScriptsManager {
         if (classRootFileLocation == null) {
             return;
         }
+        FileCopyUtils.copyFolder(getCodeClassRootFileLocation(ERepositoryObjectType.valueOf("BEANS")), classRootFileLocation);
         try {
             JarBuilder jarbuilder = new JarBuilder(classRootFileLocation, jarFile);
             jarbuilder.setIncludeDir(getRoutinesPaths());
