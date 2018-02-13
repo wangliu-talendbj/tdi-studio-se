@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -43,6 +43,7 @@ import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -96,6 +97,7 @@ import org.talend.core.model.process.ReplaceNodesInProcessProvider;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.prefs.ITalendCorePrefConstants;
 import org.talend.core.ui.CoreUIPlugin;
+import org.talend.core.ui.ITestContainerProviderService;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.designer.core.DesignerPlugin;
@@ -584,7 +586,7 @@ public class ProcessComposite extends ScrolledComposite implements IDynamicPrope
         formData = new FormData();
         formData.top = new FormAttachment(killBtn, 0, SWT.TOP);
         formData.left = new FormAttachment(killBtn, 0, SWT.RIGHT);
-        formData.right = new FormAttachment(killBtn, 10 + 70, SWT.RIGHT);
+        formData.right = new FormAttachment(killBtn, 30 + 70, SWT.RIGHT);
         formData.height = 30;
         clearTracePerfBtn.setLayoutData(formData);
 
@@ -1396,7 +1398,12 @@ public class ProcessComposite extends ScrolledComposite implements IDynamicPrope
         // Add this job to running history list.
         addTrace(1);
         IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-        if (CorePlugin.getDefault().getDesignerCoreService().isTalendEditor(activeEditor)) {
+        boolean isTestContainerEditor = false;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(ITestContainerProviderService.class)) {
+            ITestContainerProviderService testService = (ITestContainerProviderService) GlobalServiceRegister.getDefault().getService(ITestContainerProviderService.class);
+            isTestContainerEditor = testService.isTestContainerEditor(activeEditor);
+        }
+        if (CorePlugin.getDefault().getDesignerCoreService().isTalendEditor(activeEditor) || isTestContainerEditor) {
             JobLaunchShortcutManager.run(activeEditor);
         } else {
             exec();
@@ -1508,10 +1515,8 @@ public class ProcessComposite extends ScrolledComposite implements IDynamicPrope
                         if (!JobErrorsChecker.hasErrors(ProcessComposite.this.getShell())) {
 
                             if (config != null) {
-                                // PlatformUI.getWorkbench().
-                                // getActiveWorkbenchWindow
-                                // ().addPerspectiveListener(new
-                                // DebugInNewWindowListener());
+                                IPreferenceStore debugUiStore = DebugUITools.getPreferenceStore();
+                                debugUiStore.setValue(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, Boolean.FALSE);
                                 DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
 
                             } else {

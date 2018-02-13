@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -63,6 +65,7 @@ import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.migration.ChangeProjectTechinicalNameMigrationTask;
 import org.talend.repository.ui.actions.importproject.ImportProjectBean;
 import org.talend.repository.ui.actions.importproject.ImportProjectHelper;
+import org.talend.repository.ui.exception.ImportInvalidObjectException;
 import org.talend.repository.ui.utils.AfterImportProjectUtil;
 
 /**
@@ -271,6 +274,13 @@ public class TalendWizardProjectsImportPage extends WizardProjectsImportPage {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        ViewerComparator comparator = new ViewerComparator(new Comparator<Object>() {
+
+            public int compare(Object s1, Object s2) {
+                return ((String) s1).compareTo((String) s2);
+            }
+        });
+        getProjectsList().setComparator(comparator);
     }
 
     /*
@@ -532,8 +542,16 @@ public class TalendWizardProjectsImportPage extends WizardProjectsImportPage {
                     }
                     importHelper.checkProjectItems(new org.talend.core.model.general.Project(loadProject));
 
-                    AfterImportProjectUtil.runAfterImportProjectActions(new ImportProjectBean(
-                            new org.talend.core.model.general.Project(loadProject), null));
+                    try {
+                        AfterImportProjectUtil.runAfterImportProjectActions(
+                                new ImportProjectBean(new org.talend.core.model.general.Project(loadProject), null));
+                    } catch (Exception ex) {
+                        if (ex instanceof ImportInvalidObjectException) {
+                            // Ignore here
+                        } else {
+                            ExceptionHandler.process(ex);
+                        }
+                    }
                 } catch (PersistenceException e) {
                     ExceptionHandler.process(e);
                 }
