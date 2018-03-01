@@ -139,6 +139,7 @@
 		<module>main/plugins/org.talend.designer.runtime.visualization</module>
 		<module>main/plugins/org.talend.designer.runtime.visualization.tools</module>
 		<module>main/plugins/org.talend.designer.unifiedcomponent</module>
+		<module>main/plugins/org.talend.sdk.component.studio-integration</module>
 		<module>test/plugins/org.talend.designer.codegen.test</module>
 		<module>test/plugins/org.talend.designer.components.localprovider.test</module>
 		<module>test/plugins/org.talend.designer.core.test</module>

@@ -1,0 +1,30 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.metadata.IMetadataTable
+    org.talend.core.model.metadata.IMetadataColumn
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.ElementParameterParser
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.metadata.types.JavaTypesManager
+    org.talend.core.model.metadata.types.JavaType
+    org.talend.core.model.process.EConnectionType
+    java.util.List
+    java.util.ArrayList
+    java.util.Map
+"
+%>
+
+<%
+    final CodeGeneratorArgument codeGenArgument = CodeGeneratorArgument.class.cast(argument);
+    final INode node = INode.class.cast(codeGenArgument.getArgument());
+    if(node == null) {
+        throw new IllegalArgumentException("node cannot be null");
+    }
+    final IComponent component = node.getComponent();
+    if (component.useLookup()) {
+%>
+      <%@include file="./output_multiple_input_finally.javajet"%>
+<%
+    }
+%>

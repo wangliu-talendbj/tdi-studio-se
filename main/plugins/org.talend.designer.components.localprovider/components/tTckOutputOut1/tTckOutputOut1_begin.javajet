@@ -1,0 +1,35 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.metadata.IMetadataTable
+    org.talend.core.model.metadata.IMetadataColumn
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.ElementParameterParser
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.metadata.types.JavaTypesManager
+    org.talend.core.model.metadata.types.JavaType
+    org.talend.core.model.process.EConnectionType
+    java.util.List
+    java.util.ArrayList
+    java.util.Map
+"
+%>
+
+<%="// ======== tTckOutputOut1_begin.javajet =======" %>
+<%
+final CodeGeneratorArgument codeGenArgument = CodeGeneratorArgument.class.cast(argument);
+final INode node = INode.class.cast(codeGenArgument.getArgument());
+if(node == null) {
+    throw new IllegalArgumentException("node cannot be null");
+}
+for (final IConnection connection : node.getIncomingConnections(EConnectionType.FLOW_MAIN)) {
+    String row_name = connection.getName();
+%>
+    java.util.Map<<%=row_name %>Struct, <%=row_name %>Struct> <%=row_name %>_map = (java.util.Map<<%=row_name %>Struct, <%=row_name %>Struct>)globalMap.get("tHash_<%=row_name %>");
+    java.util.Iterator<<%=row_name %>Struct> <%=row_name %>_iter = null;
+    if (<%=row_name %>_map != null) {
+        <%=row_name %>_iter = <%=row_name %>_map.values().iterator();
+    }
+<%
+}
+%>
