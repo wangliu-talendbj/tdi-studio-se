@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://maven.apache.org/POM/4.0.0
+          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.talend.studio</groupId>
+    <artifactId>tdi-studio-se</artifactId>
+    <version>7.0.1-SNAPSHOT</version>
+    <relativePath>../../../</relativePath>
+  </parent>
+  <artifactId>org.talend.sdk.component.studio-integration</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+  <name>org.talend.sdk.component.studio-integration</name>
+  <description>Studio integration of the Talend Component Kit framework.</description>
+
+  <properties>
+    <!-- deps -->
+    <component-runtime.version>0.0.1</component-runtime.version>
+    <tomcat.version>9.0.5</tomcat.version>
+    <jsonb-api.version>1.0</jsonb-api.version>
+    <jsonp-api.version>1.0</jsonp-api.version>
+    <johnzon.version>1.1.7</johnzon.version>
+    <ziplock.version>7.0.4</ziplock.version>
+    <commons-cli.version>1.4</commons-cli.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <junit5.version>5.1.0-RC1</junit5.version>
+
+    <!-- plugins -->
+    <junit-platform-surefire-provider.version>1.1.0-RC1</junit-platform-surefire-provider.version>
+  </properties>
+
+  <build>
+    <plugins>
+      <!--
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+            <configuration>
+              <manifestLocation>${project.basedir}/META-INF</manifestLocation>
+              <instructions>
+                <Comment>This MANIFEST.MF is generated, see pom.xml</Comment>
+                <Require-Bundle>
+                  org.eclipse.core.runtime,
+                  org.eclipse.core.resources,
+                  org.eclipse.emf.common,
+                  org.eclipse.gef,
+                  org.eclipse.ui.views.properties.tabbed;visibility:=reexport,
+                  org.eclipse.m2e.core,
+                  org.eclipse.m2e.maven.runtime,
+                  org.eclipse.ui.views.properties.tabbed,
+                  org.talend.core,
+                  org.talend.core.ui,
+                  org.talend.core.runtime;visibility:=reexport,
+                  org.talend.core.repository,
+                  org.talend.designer.core,
+                  org.talend.designer.core.generic,
+                  org.talend.librariesmanager,
+                  org.talend.model,
+                  org.talend.commons.ui,
+                  org.talend.repository,
+                  org.talend.repository.metadata,
+                  org.talend.repository.view,
+                  org.talend.metadata.managment.ui,
+                  org.talend.repository.view.di,
+                  org.apache.commons.collections,
+                  org.talend.cwm.mip,
+                  org.talend.utils,
+                  org.apache.log4j
+                </Require-Bundle>
+                <Include-Resource>{maven-resources}</Include-Resource>
+                <Import-Package/>
+                <Bundle-SymbolicName>${project.artifactId};singleton=true</Bundle-SymbolicName>
+                <Bundle-Vendor>.Talend SA.</Bundle-Vendor>
+                <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                <Bundle-Activator>org.talend.sdk.component.studio.ServerManager</Bundle-Activator>
+                <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                <Embed-Transitive>true</Embed-Transitive>
+              </instructions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>templating-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>filter-src</id>
+            <goals>
+              <goal>filter-sources</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>${project.basedir}/src/main/java-templates</sourceDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources/java-templates</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <outputDirectory>${project.basedir}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <forkCount>1</forkCount> <!-- never use 0, it affects too much test behavior to be accurate -->
+          <trimStackTrace>false</trimStackTrace>
+          <systemPropertyVariables>
+            <test.m2.repository>${settings.localRepository}</test.m2.repository>
+            <test.version>${component-runtime.version}</test.version>
+            <java.version>${java.version}</java.version>
+          </systemPropertyVariables>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>${junit-platform-surefire-provider.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit5.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit5.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+</project>
