@@ -18,7 +18,9 @@
   <description>Studio integration of the Talend Component Kit framework.</description>
 
   <properties>
-    <!-- deps -->
+    <!--
+    deps: don't forget GAV.java, .classpath and MANIFEST.MF if you update it
+    -->
     <component-runtime.version>0.0.1</component-runtime.version>
     <tomcat.version>9.0.5</tomcat.version>
     <jsonb-api.version>1.0</jsonb-api.version>
