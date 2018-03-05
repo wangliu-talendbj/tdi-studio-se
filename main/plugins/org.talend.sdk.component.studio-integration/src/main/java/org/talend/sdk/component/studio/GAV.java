@@ -17,14 +17,13 @@ package org.talend.sdk.component.studio;
 
 public interface GAV {
 
-    String GROUP_ID = "${component-runtime.groupId}";
+    String GROUP_ID = "org.talend.sdk.component";
 
-    String ARTIFACT_ID = "${project.artifactId}";
+    String ARTIFACT_ID = "org.talend.sdk.component.studio-integration";
 
-    String COMPONENT_RUNTIME_VERSION = "${component-runtime.version}";
+    String COMPONENT_RUNTIME_VERSION = "0.0.1";
 
-    String CLI_VERSION = "${commons-cli.version}";
+    String CLI_VERSION = "1.4";
 
-    String SLF4J_VERSION = "${slf4j.version}";
-
+    String SLF4J_VERSION = "1.7.25";
 }

@@ -12,20 +12,20 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/component-server-0.0.1-model.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/geronimo-json_1.1_spec-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/geronimo-jsonb_1.0_spec-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/johnzon-core-1.1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/johnzon-jsonb-1.1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/johnzon-mapper-1.1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-api-9.0.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-juli-9.0.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-servlet-api-9.0.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-util-9.0.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-websocket-9.0.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-websocket-api-9.0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/component-server-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geronimo-json_1.1_spec.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geronimo-jsonb_1.0_spec.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/johnzon-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/johnzon-jsonb.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/johnzon-mapper.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-juli.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-servlet-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-websocket.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-websocket-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
