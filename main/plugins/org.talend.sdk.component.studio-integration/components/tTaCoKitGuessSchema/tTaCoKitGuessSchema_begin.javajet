@@ -52,6 +52,18 @@
     final IComponent guessSchemaComponent = guessSchemaNode.getComponent();
     final boolean guessSchemaUseLookup = guessSchemaComponent.useLookup();
 %>
+
+final java.io.PrintStream out = System.out;
+System.setOut(System.err);
+System.setOut(new java.io.PrintStream(new java.io.OutputStream() {
+        @Override
+        public void write(final int b) {
+            // deactivate System.out for guess schema
+            // This stream is used to transfer the schema between process
+        }
+}));
+
+
 <%
     if ("input".equalsIgnoreCase(tacokitComponentType)) {
         final CodeGeneratorArgument codeGenArgument = CodeGeneratorArgument.class.cast(argument);
@@ -65,18 +77,11 @@
         final String version = (String)node.getElementParameter(EParameterName.VERSION.getName()).getValue();
 %>
         <%@include file="../../jet_stub/generic/configuration.javajet"%>
-<%
-    } else {
-%>
+
+<%  } else { %>
         <%@include file="./tTaCoKitGuessSchema_begin_for_processor.javajet"%>
-        
-<%
-    }
-%>
+<%  } %>
 
-
-    final java.io.PrintStream out = System.out;
-    System.setOut(System.err);
     org.talend.sdk.component.runtime.di.schema.TaCoKitGuessSchema tacokitGuessSchema =
                             new org.talend.sdk.component.runtime.di.schema.TaCoKitGuessSchema(out, globalMap, configuration_<%=guessSchemaCid%>,
                                                                                     "<%=pluginName%>",
@@ -84,4 +89,13 @@
                                                                                     "<%=guessSchemaOriginalName%>",
                                                                                     <% if(actionName == null || actionName.isEmpty()){%> null <%}else {%> "<%=actionName%>" <%}%>
                                                                                     );
-    globalMap.put("___tacokitGuessSchema___", tacokitGuessSchema);
+    <% if ("input".equalsIgnoreCase(tacokitComponentType)) {  %>
+            try {
+                tacokitGuessSchema.guessInputComponentSchema();
+            } finally {
+                tacokitGuessSchema.close();
+            }
+    <% } else { %>
+        globalMap.put("___tacokitGuessSchema___", tacokitGuessSchema);
+        int _recordsCount_<%=guessSchemaCid%> = 0;
+    <% } %>

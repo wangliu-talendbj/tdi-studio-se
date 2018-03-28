@@ -33,7 +33,6 @@ public class GuessSchemaRunnable implements IRunnableWithProgress {
         try {
             Node node = Node.class.cast(elementParameter.getElement());
             Property newmockProperty = AbstractGuessSchemaProcess.getNewmockProperty();
-            // newmockProperty.setId(node.getProcess().getId());
             TaCoKitGuessSchemaProcess gsp = new TaCoKitGuessSchemaProcess(newmockProperty, node, context,
                     discoverSchemaActionName(), elementParameter.getContext());
 
@@ -42,6 +41,7 @@ public class GuessSchemaRunnable implements IRunnableWithProgress {
                 if (monitor.isCanceled()) {
                     result.cancel(true);
                     canceled = true;
+                    gsp.kill();
                     return;
                 }
             }

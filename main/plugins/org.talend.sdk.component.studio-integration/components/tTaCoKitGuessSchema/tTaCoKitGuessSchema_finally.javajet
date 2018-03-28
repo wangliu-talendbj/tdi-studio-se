@@ -41,30 +41,13 @@
     if(guessSchemaNode == null) {
         throw new IllegalArgumentException("node cannot be null");
     }
-    final String guessSchemaCid = guessSchemaNode.getUniqueName();
-    final String guessSchemaOriginalName = (String)guessSchemaNode.getElementParameter(EParameterName.COMPONENT_NAME.getName()).getValue();
-    final String guessSchemaFamily = (String)guessSchemaNode.getElementParameter(EParameterName.FAMILY.getName()).getValue();
-    final String guessSchemaVersion = (String)guessSchemaNode.getElementParameter(EParameterName.VERSION.getName()).getValue();
-    final String pluginName = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_PLUGIN_NAME___").getValue();
-    final String actionName = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_ACTION_NAME___").getValue();
     final String tacokitComponentType = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_COMPONENT_TYPE___").getValue();
-    final String outputConnectionName = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_OUTPUT_CONNECTION_NAME___").getValue();
-    final IComponent guessSchemaComponent = guessSchemaNode.getComponent();
-    final boolean guessSchemaUseLookup = guessSchemaComponent.useLookup();
+
 %>
-    try {
-        org.talend.sdk.component.runtime.di.schema.TaCoKitGuessSchema tacokitGuessSchema = (org.talend.sdk.component.runtime.di.schema.TaCoKitGuessSchema) globalMap
-            .remove("___tacokitGuessSchema___");
+
+<% if (!"input".equalsIgnoreCase(tacokitComponentType)) { %>
+        org.talend.sdk.component.runtime.di.schema.TaCoKitGuessSchema tacokitGuessSchema =
+        (org.talend.sdk.component.runtime.di.schema.TaCoKitGuessSchema) globalMap.remove("___tacokitGuessSchema___");
         tacokitGuessSchema.close();
-    } catch (Exception guessSchemaEx) {
-        log.error("Can't close and save result from guess schema action.", guessSchemaEx);
-    }
-<%
-    if ("input".equalsIgnoreCase(tacokitComponentType)) {
-        // nothing todo
-    } else {
-%>
         <%@include file="../../jet_stub/generic/processor/processor_finally.javajet"%>
-<%
-    }
-%>
+<% } %>

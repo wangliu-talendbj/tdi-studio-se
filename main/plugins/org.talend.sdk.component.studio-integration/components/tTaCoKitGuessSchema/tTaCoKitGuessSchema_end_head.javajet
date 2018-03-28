@@ -52,16 +52,7 @@
     final IComponent guessSchemaComponent = guessSchemaNode.getComponent();
     final boolean guessSchemaUseLookup = guessSchemaComponent.useLookup();
 %>
-<%
-    if ("input".equalsIgnoreCase(tacokitComponentType)) {
-%>
-        // single input can't run into this codes
-        boolean canRunIntoGuessSchemaEndCodes_<%=guessSchemaCid%> = false;
-        if (canRunIntoGuessSchemaEndCodes_<%=guessSchemaCid%>) {
-<%
-    } else {
-%>
+
+<% if (!"input".equalsIgnoreCase(tacokitComponentType)) { %>
         <%@include file="../../jet_stub/generic/processor/processor_end_head.javajet"%>
-<%
-    }
-%>
+<% } %>

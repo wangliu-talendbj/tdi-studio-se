@@ -12,6 +12,7 @@
  */
 package org.talend.sdk.component.studio.ui.guessschema;
 
+import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.InvocationTargetException;
@@ -123,16 +124,17 @@ public class GuessSchemaSelectionAdapter extends SelectionAdapter {
 
         final String schema = guessSchema.getSchema();
         if (TaCoKitUtil.isBlank(schema)) {
-            ExceptionMessageDialog.openError(composite.getShell(),
-                    Messages.getString("guessSchema.dialog.error.title"), //$NON-NLS-1$
-                    Messages.getString("guessSchema.dialog.error.msg.default")); //$NON-NLS-1$
+            ExceptionMessageDialog.openInformation(composite.getShell(),
+                    Messages.getString("guessSchema.dialog.info.NoSchema.title"), //$NON-NLS-1$
+                    Messages.getString("guessSchema.dialog.info.NoSchema.msg")); //$NON-NLS-1$
             return;
         }
 
         final Node node = Node.class.cast(elementParameter.getElement());
         IMetadataTable newMeta = buildMetadata(schema, node);
         if (newMeta == null) {
-            ExceptionMessageDialog.openError(composite.getShell(), Messages.getString("guessSchema.dialog.error.title"), //$NON-NLS-1$
+            ExceptionMessageDialog.openError(composite.getShell(), Messages.getString("guessSchema.dialog.error.title"),
+                    //$NON-NLS-1$
                     Messages.getString("guessSchema.dialog.error.msg.default"), new Exception(schema)); //$NON-NLS-1$
             return;
         }
@@ -140,42 +142,29 @@ public class GuessSchemaSelectionAdapter extends SelectionAdapter {
         metaDialog.setText(Messages.getString("guessSchema.dialog.title", node.getLabel())); //$NON-NLS-1$
         if (metaDialog.open() == MetadataDialog.OK) {
             final IMetadataTable outputMetaCopy = metaDialog.getOutputMetaData();
-            boolean modified = false;
             final IMetadataTable old = node.getMetadataTable(outputMetaCopy.getTableName());
-            if (!outputMetaCopy.sameMetadataAs(old, IMetadataColumn.OPTIONS_NONE)) {
-                modified = true;
+            IElementParameter param = node.getElementParameter(elementParameter.getName());
+            if (param instanceof IAdditionalInfo) {
+                IElementParameter schemaParam = (IElementParameter) ((IAdditionalInfo) param)
+                        .getInfo(TaCoKitConst.ADDITIONAL_PARAM_METADATA_ELEMENT);
+                if (schemaParam != null) {
+                    param = node.getElementParameter(schemaParam.getName());
+                }
             }
-
-            if (modified) {
-                IElementParameter switchParam =
-                        elem.getElementParameter(EParameterName.REPOSITORY_ALLOW_AUTO_SWITCH.getName());
-                if (switchParam != null) {
-                    switchParam.setValue(Boolean.FALSE);
+            List<? extends IConnection> incomingConnections = new ArrayList<>(node.getIncomingConnections());
+            List<? extends IConnection> outgoingConnections = new ArrayList<>(node.getOutgoingConnections());
+            try {
+                node.setIncomingConnections(EMPTY_LIST);
+                node.setOutgoingConnections(node.getOutgoingConnections(outputMetaCopy.getTableName()));
+                final ChangeMetadataCommand cmd = new ChangeMetadataCommand(node, param, old, outputMetaCopy);
+                if (commandStack != null) {
+                    commandStack.execute(cmd);
+                } else {
+                    cmd.execute();
                 }
-                IElementParameter param = node.getElementParameter(elementParameter.getName());
-                if (param instanceof IAdditionalInfo) {
-                    IElementParameter schemaParam = (IElementParameter) ((IAdditionalInfo) param)
-                            .getInfo(TaCoKitConst.ADDITIONAL_PARAM_METADATA_ELEMENT);
-                    if (schemaParam != null) {
-                        param = node.getElementParameter(schemaParam.getName());
-                    }
-
-                }
-                List<? extends IConnection> incomingConnections = new ArrayList<>(node.getIncomingConnections());
-                List<? extends IConnection> outgoingConnections = new ArrayList<>(node.getOutgoingConnections());
-                try {
-                    node.setIncomingConnections(Collections.EMPTY_LIST);
-                    node.setOutgoingConnections(node.getOutgoingConnections(outputMetaCopy.getTableName()));
-                    final ChangeMetadataCommand cmd = new ChangeMetadataCommand(node, param, old, outputMetaCopy);
-                    if (commandStack != null) {
-                        commandStack.execute(cmd);
-                    } else {
-                        cmd.execute();
-                    }
-                } finally {
-                    node.setIncomingConnections(incomingConnections);
-                    node.setOutgoingConnections(outgoingConnections);
-                }
+            } finally {
+                node.setIncomingConnections(incomingConnections);
+                node.setOutgoingConnections(outgoingConnections);
             }
         }
     }

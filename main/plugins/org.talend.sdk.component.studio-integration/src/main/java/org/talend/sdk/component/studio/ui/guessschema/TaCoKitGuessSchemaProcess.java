@@ -12,10 +12,10 @@
  */
 package org.talend.sdk.component.studio.ui.guessschema;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.talend.core.CorePlugin;
 import org.talend.core.model.components.IComponent;
@@ -55,30 +56,22 @@ public class TaCoKitGuessSchemaProcess {
     protected static final int maximumRowsToPreview = CorePlugin.getDefault().getPreferenceStore()
             .getInt(ITalendCorePrefConstants.PREVIEW_LIMIT);
 
-    private INode node;
-
-    private IContext context;
-
-    private final String discoverSchemaAction;
-
-    private final Property property;
-
-    private final String connectionName;
+    private final Task guessSchemaTask;
 
     private final ExecutorService executorService = ExecutorService.class.cast(Lookups.uiActionsThreadPool()
             .getExecutor());
 
     public TaCoKitGuessSchemaProcess(final Property property, final INode node, final IContext context,
             final String discoverSchemaAction, final String connectionName) {
-        this.node = node;
-        this.context = context;
-        this.discoverSchemaAction = discoverSchemaAction;
-        this.property = property;
-        this.connectionName = connectionName;
+        this.guessSchemaTask = new Task(property, context, node, discoverSchemaAction, connectionName, executorService);
     }
 
     public Future<String> run() {
-        return executorService.submit(new Task(property, context, node, discoverSchemaAction, connectionName));
+        return executorService.submit(guessSchemaTask);
+    }
+
+    public void kill() {
+        guessSchemaTask.kill();
     }
 
     public static class Task implements Callable<String> {
@@ -95,13 +88,18 @@ public class TaCoKitGuessSchemaProcess {
 
         private final String connectionName;
 
+        private final ExecutorService executorService;
+
+        private java.lang.Process executeProcess;
+
         public Task(final Property property, final IContext context, final INode node, final String actionName,
-                final String connectionName) {
+                final String connectionName, final ExecutorService executorService) {
             this.property = property;
             this.context = context;
             this.node = node;
             this.actionName = actionName;
             this.connectionName = connectionName;
+            this.executorService = executorService;
         }
 
         @Override
@@ -109,52 +107,51 @@ public class TaCoKitGuessSchemaProcess {
             buildProcess();
             IProcessor processor = ProcessorUtilities.getProcessor(process, null);
             processor.setContext(context);
-            java.lang.Process executeProcess = processor.run(IProcessor.NO_STATISTICS, IProcessor.NO_TRACES, null);
-            try {
-                final int exitCode = executeProcess.waitFor(); //wait check error stream
-                if (exitCode != 0) {
-                    try (
-                            final BufferedReader reader = new BufferedReader(
-                                    new InputStreamReader(executeProcess.getErrorStream()));
-                    ) {
-                        throw new IllegalStateException(reader.lines().collect(joining("\r\n")));
-                    } catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
+            final String debug = System.getProperty("org.talend.tacokit.guessschema.debug", null);
+            executeProcess = processor.run(debug == null || debug.isEmpty() ? null :
+                            singletonList(debug).toArray(new String[0]),
+                    IProcessor.NO_STATISTICS,
+                    IProcessor.NO_TRACES);
+
+            final Future<String> result = executorService.submit(() -> {
+                try (
+                        final BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(executeProcess.getInputStream()))) {
+                    return reader.lines().collect(joining("\n"));
                 }
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException(e);
+            });
+
+            // read error stream
+            final Future<String> error = executorService.submit(() -> {
+                try (
+                        final BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(executeProcess.getErrorStream()))) {
+                    return reader.lines().collect(joining("\n"));
+                }
+            });
+            executeProcess.waitFor();
+            final String errMessage = error.get();
+            if (errMessage != null && !errMessage.isEmpty()) {
+                throw new IllegalStateException(errMessage);
             }
 
-            try (
-                    final BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(executeProcess.getInputStream()));
-            ) {
-                return reader.lines().collect(joining("\n"));
+            return result.get();
+        }
 
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
+        public synchronized void kill() {
+            if (executeProcess != null && executeProcess.isAlive()) {
+                final java.lang.Process p = executeProcess.destroyForcibly();
+                try {
+                    p.waitFor(20, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
 
         private void buildProcess() {
-            IProcess originalProcess = null;
-
-            boolean useMokeJob = true;
-            if (useMokeJob) {
-                /**
-                 * use mocked process to run guess schema job in .Java maven project
-                 */
-                originalProcess = new Process(property);
-                // seems mock job has problems with log
-            } else {
-                /**
-                 * if we use node.getProcess(), guess schema job will be run in the maven project of the job, but seems
-                 * still have problem for guessing schema of input
-                 */
-                originalProcess = node.getProcess();
-            }
+            IProcess originalProcess;
+            originalProcess = new Process(property);
 
             List<? extends IConnection> outgoingConnections = new ArrayList<>(node.getOutgoingConnections());
             try {
@@ -166,10 +163,10 @@ public class TaCoKitGuessSchemaProcess {
                 DataProcess dataProcess = new DataProcess(originalProcess);
                 dataProcess.buildFromGraphicalProcess(nodes);
                 process = dataProcess.getDuplicatedProcess();
-                if (useMokeJob) {
-                    process.getContextManager().getListContext().addAll(originalProcess.getContextManager().getListContext());
-                    process.getContextManager().setDefaultContext(this.context);
-                }
+                process.getContextManager()
+                        .getListContext()
+                        .addAll(originalProcess.getContextManager().getListContext());
+                process.getContextManager().setDefaultContext(this.context);
                 List<INode> nodeList = dataProcess.getNodeList();
                 INode newNode = null;
                 // INode newNode = dataProcess.buildNodeFromNode(node, process);
@@ -219,7 +216,8 @@ public class TaCoKitGuessSchemaProcess {
             }
         }
 
-        private void retrieveNodes(final List<INode> nodeList, final Set<INode> recordedNodes, final INode currentNode) {
+        private void retrieveNodes(final List<INode> nodeList, final Set<INode> recordedNodes,
+                final INode currentNode) {
             if (currentNode == null || recordedNodes.contains(currentNode)) {
                 return;
             }

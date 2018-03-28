@@ -52,19 +52,24 @@
     final IComponent guessSchemaComponent = guessSchemaNode.getComponent();
     final boolean guessSchemaUseLookup = guessSchemaComponent.useLookup();
 %>
-<%
-    if ("input".equalsIgnoreCase(tacokitComponentType)) {
-%>
-        tacokitGuessSchema.guessInputComponentSchema();
-<%
-    } else {
-%>
+
+<% if (!"input".equalsIgnoreCase(tacokitComponentType)) { %>
+
         <%@include file="../../jet_stub/generic/processor/processor_main.javajet"%>
-        Object rowObject = outputHandler_<%=guessSchemaCid%>.getValue("<%= outputConnectionName %>", Object.class);
-        if (tacokitGuessSchema.guessSchemaThroughResult(rowObject)) {
-            tacokitGuessSchema.flush();
+        Object rowObject_<%=guessSchemaCid%> = outputHandler_<%=guessSchemaCid%>.getValue("<%= outputConnectionName %>", Object.class);
+        if (Object.class == rowObject_<%=guessSchemaCid%>.getClass()) {
+            // means we will not find it through data
+            // try by reflection
+            tacokitGuessSchema.fromOutputEmitterPojo(processorImpl_<%=cid%>, "<%= outputConnectionName %>");
             return;
         }
-<%
-    }
-%>
+        if (tacokitGuessSchema.guessSchemaThroughResult(rowObject_<%=guessSchemaCid%>)) {
+            return;
+        }
+
+        _recordsCount_<%=guessSchemaCid%>++;
+        if(_recordsCount_<%=guessSchemaCid%> > 100){
+            return; //stop reading. a sort of timeout
+        }
+
+<% } %>

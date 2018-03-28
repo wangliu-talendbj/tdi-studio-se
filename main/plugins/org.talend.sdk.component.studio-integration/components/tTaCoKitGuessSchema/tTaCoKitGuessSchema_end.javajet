@@ -41,23 +41,9 @@
     if(guessSchemaNode == null) {
         throw new IllegalArgumentException("node cannot be null");
     }
-    final String guessSchemaCid = guessSchemaNode.getUniqueName();
-    final String guessSchemaOriginalName = (String)guessSchemaNode.getElementParameter(EParameterName.COMPONENT_NAME.getName()).getValue();
-    final String guessSchemaFamily = (String)guessSchemaNode.getElementParameter(EParameterName.FAMILY.getName()).getValue();
-    final String guessSchemaVersion = (String)guessSchemaNode.getElementParameter(EParameterName.VERSION.getName()).getValue();
-    final String pluginName = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_PLUGIN_NAME___").getValue();
-    final String actionName = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_ACTION_NAME___").getValue();
     final String tacokitComponentType = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_COMPONENT_TYPE___").getValue();
-    final String outputConnectionName = (String)guessSchemaNode.getElementParameter("___TACOKIT_GUESS_SCHEMA_PARAMETER_OUTPUT_CONNECTION_NAME___").getValue();
-    final IComponent guessSchemaComponent = guessSchemaNode.getComponent();
-    final boolean guessSchemaUseLookup = guessSchemaComponent.useLookup();
+
 %>
-<%
-    if ("input".equalsIgnoreCase(tacokitComponentType)) {
-        // nothing to do
-    } else {
-%>
+<% if (!"input".equalsIgnoreCase(tacokitComponentType)) { %>
         <%@include file="../../jet_stub/generic/processor/processor_end.javajet"%>
-<%
-    }
-%>
+<% } %>
