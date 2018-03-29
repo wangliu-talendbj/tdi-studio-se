@@ -13,11 +13,11 @@
 package org.talend.sdk.component.studio.ui.guessschema;
 
 import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -43,10 +43,10 @@ import org.talend.core.model.process.IConnection;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INodeConnector;
 import org.talend.core.runtime.IAdditionalInfo;
 import org.talend.core.ui.metadata.dialog.MetadataDialog;
 import org.talend.core.utils.KeywordsValidator;
-import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.cmd.ChangeMetadataCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.uidialog.OpenContextChooseComboDialog;
@@ -116,6 +116,8 @@ public class GuessSchemaSelectionAdapter extends SelectionAdapter {
             if (InterruptedException.class.isInstance(e)) {
                 Thread.currentThread().interrupt();
             }
+
+            return; // Guess schema failed
         }
 
         if (guessSchema.isCanceled()) {
@@ -151,10 +153,13 @@ public class GuessSchemaSelectionAdapter extends SelectionAdapter {
                     param = node.getElementParameter(schemaParam.getName());
                 }
             }
-            List<? extends IConnection> incomingConnections = new ArrayList<>(node.getIncomingConnections());
-            List<? extends IConnection> outgoingConnections = new ArrayList<>(node.getOutgoingConnections());
+            final List<? extends IConnection> incomingConnections = new ArrayList<>(node.getIncomingConnections());
+            final List<? extends IConnection> outgoingConnections = new ArrayList<>(node.getOutgoingConnections());
+            final List<? extends INodeConnector> connectorsList = new ArrayList<>(node.getListConnector());
+
             try {
                 node.setIncomingConnections(EMPTY_LIST);
+                node.setListConnector(singletonList(node.getConnectorFromName(outputMetaCopy.getTableName())));
                 node.setOutgoingConnections(node.getOutgoingConnections(outputMetaCopy.getTableName()));
                 final ChangeMetadataCommand cmd = new ChangeMetadataCommand(node, param, old, outputMetaCopy);
                 if (commandStack != null) {
@@ -165,6 +170,7 @@ public class GuessSchemaSelectionAdapter extends SelectionAdapter {
             } finally {
                 node.setIncomingConnections(incomingConnections);
                 node.setOutgoingConnections(outgoingConnections);
+                node.setListConnector(connectorsList);
             }
         }
     }
