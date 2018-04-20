@@ -54,8 +54,11 @@ imports="
     boolean isCustom = hiveDistrib instanceof org.talend.hadoop.distribution.custom.CustomDistribution;
 
 	if(hiveDistrib.isExecutedThroughWebHCat()) {
+		// Distribution: WebHCat
 %>
+
 		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetAzureConnection.javajet"%>
+
 <%
 		if("false".equals(useExistingConn)) { // This variable is declared and initialized in the GetAzureConnection.javajet
 			boolean setMemory = "true".equals(ElementParameterParser.getValue(node, "__SET_MEMORY__"));
@@ -86,10 +89,17 @@ imports="
 <%
 		}
     } else if(hiveDistrib.isGoogleDataprocDistribution()) {
+		// Distribution: Google Dataproc
 %>
         <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetDataprocConnection.javajet"%>
 <%
+	} else if (hiveDistrib.isQuboleDistribution()) {
+		// Distribution: Qubole
+%>
+		// Preparation if needed.
+<%
 	} else {
+		// Distribution: other than WebHCat, Dataproc, Qubole
 %>
 		<%@ include file="../templates/Hive/GetConnection.javajet"%>
 <%
@@ -122,13 +132,12 @@ imports="
 	boolean isParquetSupported = isCustom || hiveDistrib.doSupportParquetFormat();
 	if(useParquet && !isParquetSupported) {
 %>
-		if(true) {
-			throw new java.lang.UnsupportedOperationException("Parquet is only supported if the distribution uses embedded Hive version 0.10 or later.");
-		}
+		throw new java.lang.UnsupportedOperationException("Parquet is only supported if the distribution uses embedded Hive version 0.10 or later.");
 <%
 	}
 
 	// Register jars to handle the parquet format.
+	// TODO: add jar possible on qubole ?
 
 	java.util.List<String> jarsToRegister = null;
 	java.util.List<String> jars = null;
