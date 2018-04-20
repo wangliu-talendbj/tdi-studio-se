@@ -244,12 +244,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.talend.libraries.nattable"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.talend.libraries.netsuite"
          download-size="0"
          install-size="0"
