@@ -16,10 +16,6 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.eclipse.test"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.talend.dataquality.matching" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.talend.designer.runprocess" version="2.2.0" match="greaterOrEqual"/>
