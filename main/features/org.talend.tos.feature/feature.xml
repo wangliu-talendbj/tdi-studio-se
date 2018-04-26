@@ -78,6 +78,19 @@
          id="org.talend.updates.feature"
          version="0.0.0"/>
 
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.talend.commons.ui"/>
+      <import plugin="org.talend.designer.core"/>
+      <import plugin="org.eclipse.xsd"/>
+      <import plugin="org.apache.log4j"/>
+      <import plugin="org.talend.repository"/>
+      <import plugin="org.talend.core"/>
+      <import plugin="org.apache.axis"/>
+      <import plugin="javax.xml.rpc"/>
+   </requires>
+
    <plugin
          id="org.talend.repository.mdm"
          download-size="0"
