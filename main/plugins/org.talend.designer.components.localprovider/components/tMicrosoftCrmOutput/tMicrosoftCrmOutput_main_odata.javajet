@@ -36,19 +36,22 @@
                             
 		  			    			if(lookupMaps.containsKey(column.getLabel())){
                            %>
-                            		if(<%=connName%>.<%=column.getLabel()%> != null<%if(emptyLookupIntoNull) {%> && !(String.valueOf(<%=connName%>.<%=column.getLabel()%>).isEmpty())<%}%>){
-	                            		client_<%=cid%>.addEntityNavigationLink(entity_<%=cid%>, <%=lookupMaps.get(column.getLabel())%>,"<%=column.getOriginalDbColumnName()%>", <%=connName%>.<%=column.getLabel()%>);
-	                            	}
+	                            	client_<%=cid%>.addEntityNavigationLink(entity_<%=cid%>, <%=lookupMaps.get(column.getLabel())%>,"<%=column.getOriginalDbColumnName()%>", <%=connName%>.<%=column.getLabel()%>, <%=emptyLookupIntoNull%>, <%=ignoreNull%>);
                            <%
                            }else{
 	                           if(!isPrimitive && ignoreNull) {
 			  							%>   				
 			  			    				if(<%=connName%>.<%=column.getLabel()%> != null){
-			  			    				
+
 			  			    			<%
 			  			    			}
+
+                          String columnValue = connName+"."+column.getLabel();
+                          if("Guid".equals(column.getType())){
+                                columnValue = "(("+columnValue+" == null) ? null : java.util.UUID.fromString("+columnValue+"))";
+                          }
 	                           %>
-                           		client_<%=cid%>.addEntityProperty(entity_<%=cid%>, "<%=column.getLabel()%>", org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind.<%=column.getType()%>, 	<%=connName%>.<%=column.getLabel()%>);
+                           		client_<%=cid%>.addEntityProperty(entity_<%=cid%>, "<%=column.getLabel()%>", org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind.<%=column.getType()%>, 	<%=columnValue%>);
 	                           <%
 	                           if(!isPrimitive && ignoreNull) {
 			  			    			%>
