@@ -36,11 +36,10 @@ java.util.List<String> connectionCommandList_<%=cid%> = new java.util.ArrayList<
         connectionCommandList_<%=cid%>.add("use " + dbname_<%=cid%> + ";");
     }
 
-	org.talend.bigdata.launcher.qubole.QuboleHiveClient client_<%=cid%> =
-		new org.talend.bigdata.launcher.qubole.QuboleHiveClient.Builder()
-		  .setApiEndpoint(<%=ElementParameterParser.getValue(node, "__QUBOLE_API_ENDPOINT__")%>)
-		  .setApiKey(<%=ElementParameterParser.getValue(node, "__QUBOLE_API_KEY__")%>)
-		  build();
+	org.talend.bigdata.launcher.qubole.QuboleHiveJob instance_<%=cid%> =
+		new org.talend.bigdata.launcher.qubole.QuboleHiveJob(
+			<%=ElementParameterParser.getValue(node, "__QUBOLE_API_ENDPOINT__")%>),
+			<%=ElementParameterParser.getValue(node, "__QUBOLE_API_KEY__")%>);
 
 <%
     if(isLog4jEnabled) {
@@ -52,6 +51,6 @@ java.util.List<String> connectionCommandList_<%=cid%> = new java.util.ArrayList<
     }
 %>
 
-    globalMap.put("conn_<%=cid%>", client_<%=cid%>);
+    globalMap.put("conn_<%=cid%>", instance_<%=cid%>);
     // Will be used to put additionals jars on google storage
     //globalMap.put("stagingBucket_<%=cid%>", <%=ElementParameterParser.getValue(node, "__GOOGLE_JARS_BUCKET__")%>);
