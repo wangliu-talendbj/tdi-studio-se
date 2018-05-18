@@ -284,7 +284,7 @@ public class MainComposite extends AbstractTabComposite {
             CLabel versionLabel = widgetFactory.createCLabel(composite,
                     Messages.getString("MainComposite.VersionAuthorSection.versionLabel")); //$NON-NLS-1$
             data = new FormData();
-            data.left = new FormAttachment(authorText, ITabbedPropertyConstants.HSPACE * 3);
+            data.left = new FormAttachment(authorText, ITabbedPropertyConstants.HSPACE - 10);
             data.right = new FormAttachment(versionText, -ITabbedPropertyConstants.HSPACE);
             data.top = new FormAttachment(versionText, 0, SWT.CENTER);
             versionLabel.setLayoutData(data);
@@ -394,7 +394,7 @@ public class MainComposite extends AbstractTabComposite {
             data.top = new FormAttachment(purposeText, 0, SWT.CENTER);
             purposeLabel.setLayoutData(data);
 
-            statusText = widgetFactory.createCCombo(composite, SWT.READ_ONLY | SWT.BORDER);
+            statusText = widgetFactory.createCCombo(composite, SWT.READ_ONLY);
             data = new FormData();
             data.left = new FormAttachment(purposeText, AbstractPropertySection.STANDARD_LABEL_WIDTH);
             data.right = new FormAttachment(100, 0);
@@ -425,7 +425,7 @@ public class MainComposite extends AbstractTabComposite {
             data.top = new FormAttachment(purposeText, 0, SWT.CENTER);
             purposeLabel.setLayoutData(data);
 
-            statusText = widgetFactory.createCCombo(composite, SWT.READ_ONLY | SWT.BORDER);
+            statusText = widgetFactory.createCCombo(composite, SWT.READ_ONLY);
             data = new FormData();
             data.left = new FormAttachment(purposeText, AbstractPropertySection.STANDARD_LABEL_WIDTH);
             data.right = new FormAttachment(100, 0);
@@ -441,7 +441,7 @@ public class MainComposite extends AbstractTabComposite {
         CLabel statusLabel = widgetFactory.createCLabel(composite,
                 Messages.getString("MainComposite.PurposeStatusSection.statusLabel")); //$NON-NLS-1$
         data = new FormData();
-        data.left = new FormAttachment(purposeText, ITabbedPropertyConstants.HSPACE * 3);
+        data.left = new FormAttachment(purposeText, ITabbedPropertyConstants.HSPACE - 10);
         data.right = new FormAttachment(statusText, -ITabbedPropertyConstants.HSPACE);
         data.top = new FormAttachment(statusText, 0, SWT.CENTER);
         statusLabel.setLayoutData(data);
