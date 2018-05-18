@@ -5,6 +5,12 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 String dbname = ElementParameterParser.getValue(node, "__DBNAME__");
+
+String encryptedToken = ElementParameterParser.getEncryptedValue(node, "__QUBOLE_API_TOKEN__");
+String quboleEndpoint = null;
+if (ElementParameterParser.getBooleanValue(node, "__QUBOLE_ENDPOINT__")) {
+	quboleEndpoint = ElementParameterParser.getValue(node, "__QUBOLE_ENDPOINT_URL__");
+}
 %>
 
 java.util.List<String> connectionCommandList_<%=cid%> = new java.util.ArrayList<String>();
@@ -36,10 +42,13 @@ java.util.List<String> connectionCommandList_<%=cid%> = new java.util.ArrayList<
         connectionCommandList_<%=cid%>.add("use " + dbname_<%=cid%> + ";");
     }
 
-	org.talend.bigdata.launcher.qubole.QuboleHiveJob instance_<%=cid%> =
-		new org.talend.bigdata.launcher.qubole.QuboleHiveJob(
-			<%=ElementParameterParser.getValue(node, "__QUBOLE_API_ENDPOINT__")%>),
-			<%=ElementParameterParser.getValue(node, "__QUBOLE_API_KEY__")%>);
+	String api_token_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=encryptedToken%>);
+
+	org.talend.bigdata.launcher.qubole.QuboleHiveClient instance_<%=cid%> =
+		new org.talend.bigdata.launcher.qubole.QuboleHiveClient.Builder()
+			.setApiKey(api_token_<%=cid%>)
+			<% if (quboleEndpoint != null) {%> .setApiEndpoint(<%=quboleEndpoint%>) <%} %>
+			.build();
 
 <%
     if(isLog4jEnabled) {
