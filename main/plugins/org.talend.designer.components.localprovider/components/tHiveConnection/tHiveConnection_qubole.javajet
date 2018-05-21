@@ -61,5 +61,6 @@ java.util.List<String> connectionCommandList_<%=cid%> = new java.util.ArrayList<
 %>
 
     globalMap.put("conn_<%=cid%>", instance_<%=cid%>);
-    // Will be used to put additionals jars on google storage
-    //globalMap.put("stagingBucket_<%=cid%>", <%=ElementParameterParser.getValue(node, "__GOOGLE_JARS_BUCKET__")%>);
+    if (!connectionCommandList_<%=cid%>.isEmpty()) {
+    	globalMap.put("conn_init_statements_<%=cid%>", connectionCommandList_<%=cid%>);
+    }
