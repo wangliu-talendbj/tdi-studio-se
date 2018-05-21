@@ -579,7 +579,6 @@
 			SHOW_IF="(isShow[QUBOLE_ENDPOINT] AND QUBOLE_ENDPOINT == 'true')">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
 		<!-- END QUBOLE -->
 
 	</PARAMETERS>

@@ -34,15 +34,27 @@ imports="
     String theDistribution = ElementParameterParser.getValue(node, "__DISTRIBUTION__");
     String theVersion = ElementParameterParser.getValue(node, "__HIVE_VERSION__");
 
+	String quboleClusterLabel = null;
+	String quboleEndpoint = null;
+	String encryptedToken = null;
     if("true".equals(ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__"))) {
         String connection = ElementParameterParser.getValue(node, "__CONNECTION__");
         for (INode pNode : node.getProcess().getNodesOfType("tHiveConnection")) {
             if(connection!=null && connection.equals(pNode.getUniqueName())) {
                 theDistribution = ElementParameterParser.getValue(pNode, "__DISTRIBUTION__");
                 theVersion = ElementParameterParser.getValue(pNode, "__HIVE_VERSION__");
+				if (ElementParameterParser.getBooleanValue(pNode, "__QUBOLE_CLUSTER__")) {
+					quboleClusterLabel = ElementParameterParser.getValue(pNode, "__QUBOLE_CLUSTER_LABEL__");
+				}
             }
         }
-    }
+    } else {
+	    // without connection
+	    encryptedToken = ElementParameterParser.getEncryptedValue(node, "__QUBOLE_API_TOKEN__");
+		if (ElementParameterParser.getBooleanValue(node, "__QUBOLE_ENDPOINT__")) {
+			quboleEndpoint = ElementParameterParser.getValue(node, "__QUBOLE_ENDPOINT_URL__");
+		}
+	}
 
     org.talend.hadoop.distribution.component.HiveComponent hiveDistrib = null;
     try {
@@ -93,10 +105,10 @@ imports="
 %>
         <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetDataprocConnection.javajet"%>
 <%
-	} else if (hiveDistrib.isQuboleDistribution()) {
+	} else if (hiveDistrib.isQuboleDistribution()) {  // get qubole connection
 		// Distribution: Qubole
 %>
-		// Preparation if needed.
+		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetQuboleConnection.javajet"%>
 <%
 	} else {
 		// Distribution: other than WebHCat, Dataproc, Qubole

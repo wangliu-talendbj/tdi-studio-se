@@ -53,6 +53,7 @@ java.util.List<String> connectionCommandList_<%=cid%> = new java.util.ArrayList<
 <%
     if(isLog4jEnabled) {
 %>
+		log.info("<%=cid%> - connection created.");
         for (String command: connectionCommandList_<%=cid%> ) {
             log.debug("Initialization command from <%=cid%>: " + command);
         }

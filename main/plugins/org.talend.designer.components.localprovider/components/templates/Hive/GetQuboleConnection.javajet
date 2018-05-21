@@ -65,6 +65,7 @@ imports="
         java.util.List<String> connectionCommandList_<%=cid%> = null;
         if (globalMap.containsKey("conn_init_statements_<%=quboleConnection%>")) {
         	connectionCommandList_<%=cid%> = (java.util.List<String>) globalMap.get("conn_init_statements_<%=quboleConnection%>");
+        	globalMap.remove("conn_init_statements_<%=quboleConnection%>");
         }
 <%
 	}

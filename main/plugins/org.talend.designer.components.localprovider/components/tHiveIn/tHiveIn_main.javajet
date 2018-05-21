@@ -34,15 +34,28 @@ imports="
     String theDistribution = ElementParameterParser.getValue(node, "__DISTRIBUTION__");
     String theVersion = ElementParameterParser.getValue(node, "__HIVE_VERSION__");
 
+	String quboleClusterLabel = null;
+	String quboleEndpoint = null;
+	String encryptedToken = null;
     if ("true".equals(ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__"))) {
         String connection = ElementParameterParser.getValue(node, "__CONNECTION__");
         for (INode pNode : node.getProcess().getNodesOfType("tHiveConnection")) {
             if (connection!=null && connection.equals(pNode.getUniqueName())) {
                 theDistribution = ElementParameterParser.getValue(pNode, "__DISTRIBUTION__");
                 theVersion = ElementParameterParser.getValue(pNode, "__HIVE_VERSION__");
+               	if (ElementParameterParser.getBooleanValue(pNode, "__QUBOLE_CLUSTER__")) {
+					quboleClusterLabel = ElementParameterParser.getValue(pNode, "__QUBOLE_CLUSTER_LABEL__");
+				}
+                
             }
         }
-    }
+    } else {
+	    // without connection
+	    encryptedToken = ElementParameterParser.getEncryptedValue(node, "__QUBOLE_API_TOKEN__");
+		if (ElementParameterParser.getBooleanValue(node, "__QUBOLE_ENDPOINT__")) {
+			quboleEndpoint = ElementParameterParser.getValue(node, "__QUBOLE_ENDPOINT_URL__");
+		}
+	}
 
     org.talend.hadoop.distribution.component.HiveComponent hiveDistrib = null;
     try {
@@ -94,7 +107,7 @@ imports="
     }
     if (hiveDistrib.isQuboleDistribution()) {
 %>
-		// Qubole codes. 
+		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetQuboleConnection.javajet"%>
 <%
 	}
 
@@ -361,8 +374,41 @@ imports="
 <%
     }
     if (hiveDistrib.isQuboleDistribution()) {
-    %>
-    	// post processing
-    <%
+        %>
+        	String queries_<%=cid%> = "";
+        	if (connectionCommandList_<%=cid%> != null) {
+        		for (String command : connectionCommandList_<%=cid%>) {
+        			queries_<%=cid%> += command;
+        			<% if (isLog4jEnabled) { %>
+        				log.info("<%=cid%> - query added: " + command);
+        			<% } %>
+        		}
+        	}
+        	
+        	String query_<%=cid %> = <%=dbquery%>;
+        <%
+			if (isLog4jEnabled) {
+%>
+				log.info("<%=cid%> - query added: " + query_<%=cid %>.replace("';'", "'\\;'") + ";");
+				log.info("<%=cid%> - queries sent to cluster, waiting for execution result ...");
+<%
+			}
+            if (quboleClusterLabel != null) {
+%>
+           		String execution_result_<%=cid%> = instance_<%=cid%>.execute(queries_<%=cid%> + query_<%=cid %>.replace("';'", "'\\;'") + ";", <%=quboleClusterLabel%>).getResults();
+            <%
+            } else {
+%>
+				String execution_result_<%=cid%> = instance_<%=cid%>.execute(queries_<%=cid%> + query_<%=cid %>.replace("';'", "'\\;'") + ";").getResults();
+<%
+			}
+			if (isLog4jEnabled) {
+			%>
+				log.info("<%=cid%> - execution finished.");
+			<%
+			}
+			%>
+			java.io.InputStream <%=ElementParameterParser.getValue(node, "__INPUT_STREAM_NAME__")%> = instance_<%=cid%>.getStdOut();
+			<%
     }
 %>
