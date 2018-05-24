@@ -164,7 +164,7 @@ imports="
                     }
                     if (hiveDistrib.isQuboleDistribution()) {
                     %>
-                    	// register jar
+                    	// Qubole hive 1.2 supports parquet by default.
                     <%
                     }
                 }
