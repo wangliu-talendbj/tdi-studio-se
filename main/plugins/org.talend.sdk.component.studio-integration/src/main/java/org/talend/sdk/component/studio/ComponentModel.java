@@ -106,6 +106,8 @@ public class ComponentModel extends AbstractBasicComponent implements IAdditiona
 
     private Boolean useLookup = null;
 
+    private boolean hasConditionalOutput = false;
+
     private ETaCoKitComponentType tacokitComponentType;
 
     public ComponentModel(final ComponentIndex component, final ComponentDetail detail, final ImageDescriptor image32,
@@ -169,9 +171,13 @@ public class ComponentModel extends AbstractBasicComponent implements IAdditiona
         return Collections.unmodifiableList(ETaCoKitComponentType.input.equals(getTaCoKitComponentType())
                 ? Arrays.asList(ECodePart.BEGIN, ECodePart.END, ECodePart.FINALLY)
                 : (useLookup()
-                        ? Arrays.asList(ECodePart.BEGIN, ECodePart.MAIN, ECodePart.END_HEAD, ECodePart.END_BODY,
-                                ECodePart.END_TAIL, ECodePart.FINALLY)
-                        : Arrays.asList(ECodePart.BEGIN, ECodePart.MAIN, ECodePart.END, ECodePart.FINALLY)));
+                ?
+                Arrays.asList(ECodePart.BEGIN, ECodePart.PROCESS_DATA_BEGIN, ECodePart.MAIN, ECodePart.PROCESS_DATA_END, ECodePart.PROCESS_RECORDS_END,
+                        ECodePart.END_HEAD, ECodePart.END_BODY,
+                        ECodePart.END_TAIL, ECodePart.FINALLY)
+                :
+                Arrays.asList(ECodePart.BEGIN, ECodePart.PROCESS_DATA_BEGIN, ECodePart.MAIN, ECodePart.PROCESS_DATA_END, ECodePart.PROCESS_RECORDS_END,
+                        ECodePart.END, ECodePart.FINALLY)));
     }
 
     /**
@@ -637,6 +643,11 @@ public class ComponentModel extends AbstractBasicComponent implements IAdditiona
         for (Map.Entry<String, Object> entry : additionalInfoMap.entrySet()) {
             targetAdditionalInfo.putInfo(entry.getKey(), entry.getValue());
         }
+    }
+
+    @Override
+    public boolean hasConditionalOutputs() {
+        return detail.getOutputFlows().size() > 1;
     }
 
     public List<ActionReference> getDiscoverSchemaActions() {
