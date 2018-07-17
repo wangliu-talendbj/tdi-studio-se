@@ -63,6 +63,8 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProjectReference;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.RoutineItem;
+import org.talend.core.model.relationship.Relation;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.runprocess.data.PerformanceData;
@@ -76,7 +78,6 @@ import org.talend.core.runtime.projectsetting.ProjectPreferenceManager;
 import org.talend.core.service.IESBMicroService;
 import org.talend.core.service.IESBRouteService;
 import org.talend.core.ui.ITestContainerProviderService;
-import org.talend.designer.maven.launch.MavenPomCommandLauncher;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.tools.MavenPomSynchronizer;
@@ -284,11 +285,23 @@ public class DefaultRunProcessService implements IRunProcessService {
         } else {
             // If OSGI contains new processor, need to add built type in args map
 
-            if (property != null
-                    && "OSGI".equals(property.getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE))) {
-                if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
-                    soapService = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
-                    return soapService.createOSGIJavaProcessor(process, property, filenameFromLabel);
+            if (property != null) {
+                boolean servicePart = false;
+                List<Relation> relations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(property.getId(),
+                        property.getVersion(), RelationshipItemBuilder.JOB_RELATION);
+
+                for (Relation relation : relations) {
+                    if (RelationshipItemBuilder.SERVICES_RELATION.equals(relation.getType())) {
+                        servicePart = true;
+                        break;
+                    }
+                }
+                if ("OSGI".equals(property.getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE))
+                        || servicePart) {
+                    if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+                        soapService = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
+                        return soapService.createOSGIJavaProcessor(process, property, filenameFromLabel);
+                    }
                 }
 
                 return new MavenJavaProcessor(process, property, filenameFromLabel);
@@ -688,8 +701,8 @@ public class DefaultRunProcessService implements IRunProcessService {
     }
 
     @Override
-    public ITalendProcessJavaProject getTalendCodeJavaProject(ERepositoryObjectType type, Project project) {
-        return TalendJavaProjectManager.getTalendCodeJavaProject(type, project);
+    public ITalendProcessJavaProject getTalendCodeJavaProject(ERepositoryObjectType type, String projectTechName) {
+        return TalendJavaProjectManager.getTalendCodeJavaProject(type, projectTechName);
     }
 
     @Override
@@ -770,35 +783,33 @@ public class DefaultRunProcessService implements IRunProcessService {
         refHelper.installRootPom(true);
 
         // install ref codes project.
-        Map<String, Object> argumentsMap = new HashMap<>();
-        argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_INSTALL);
         IProgressMonitor monitor = new NullProgressMonitor();
-        installRefCodeProject(ERepositoryObjectType.ROUTINES, refHelper, argumentsMap, monitor);
+        installRefCodeProject(ERepositoryObjectType.ROUTINES, refHelper, monitor);
 
         if (ProcessUtils.isRequiredPigUDFs(null, refProject)) {
-            installRefCodeProject(ERepositoryObjectType.PIG_UDF, refHelper, argumentsMap, monitor);
+            installRefCodeProject(ERepositoryObjectType.PIG_UDF, refHelper, monitor);
         }
 
         if (ProcessUtils.isRequiredBeans(null, refProject)) {
-            installRefCodeProject(ERepositoryObjectType.valueOf("BEANS"), refHelper, argumentsMap, monitor); //$NON-NLS-1$
+            installRefCodeProject(ERepositoryObjectType.valueOf("BEANS"), refHelper, monitor); //$NON-NLS-1$
         }
     }
 
-    private void installRefCodeProject(ERepositoryObjectType codeType, AggregatorPomsHelper refHelper,
-            Map<String, Object> argumentsMap, IProgressMonitor monitor) throws Exception, CoreException {
+    private void installRefCodeProject(ERepositoryObjectType codeType, AggregatorPomsHelper refHelper, IProgressMonitor monitor)
+            throws Exception, CoreException {
         if (!refHelper.getProjectRootPom().exists()) {
             return;
         }
         String projectTechName = refHelper.getProjectTechName();
         ITalendProcessJavaProject codeProject = TalendJavaProjectManager.getExistingTalendCodeProject(codeType, projectTechName);
         if (codeProject != null) {
+            codeProject.buildWholeCodeProject();
+            Map<String, Object> argumentsMap = new HashMap<>();
+            argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_INSTALL);
+            argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, TalendMavenConstants.ARG_MAIN_SKIP);
             codeProject.buildModules(monitor, null, argumentsMap);
             codeProject.getProject().delete(false, true, monitor);
             TalendJavaProjectManager.removeFromCodeJavaProjects(codeType, projectTechName);
-        } else {
-            IFile pomFile = refHelper.getCodeFolder(codeType).getFile(TalendMavenConstants.POM_FILE_NAME);
-            MavenPomCommandLauncher launcher = new MavenPomCommandLauncher(pomFile, TalendMavenConstants.GOAL_INSTALL);
-            launcher.execute(monitor);
         }
     }
 
