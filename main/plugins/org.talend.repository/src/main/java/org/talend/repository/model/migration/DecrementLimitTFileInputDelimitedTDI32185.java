@@ -15,6 +15,7 @@ import org.talend.core.model.components.filters.NameComponentFilter;
 import org.talend.core.model.metadata.types.TypesManager;
 import org.talend.core.model.migration.AbstractJobMigrationTask;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ColumnType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.MetadataType;
@@ -59,10 +60,17 @@ public class DecrementLimitTFileInputDelimitedTDI32185 extends AbstractJobMigrat
         						return;
         					}
         					ElementParameterType limit = ComponentUtilities.getNodeProperty(node, "LIMIT");
-        					Integer intLimitValue = Integer.parseInt(limit.getValue());
-        					if(intLimitValue > 0) {
-        						intLimitValue--;
-        						limit.setValue(String.valueOf(intLimitValue));
+        					try {
+        						Integer intLimitValue = Integer.parseInt(limit.getValue());
+        						if(intLimitValue > 0) {
+        							intLimitValue--;
+        							limit.setValue(String.valueOf(intLimitValue));
+        						}
+        					} catch(NumberFormatException e) {
+        						String sLimit = limit.getValue();
+        						if(ContextParameterUtils.isContainContextParam(sLimit)) {
+        							limit.setValue(sLimit + "-1");
+        						}
         					}
         				}
         			}));
