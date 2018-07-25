@@ -58,13 +58,13 @@ public class ValidationLabel extends TaCoKitElementParameter {
         setValue("");
     }
 
-    public void showValidation(final String message) {
+    void showValidation(final String message) {
         validationMessage = message;
         setShow(true);
         setValue(buildValue());
     }
 
-    public void hideValidation() {
+    void hideValidation() {
         validationMessage = null;
         setShow(false);
         setValue("");

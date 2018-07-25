@@ -21,7 +21,7 @@ import org.talend.sdk.component.studio.model.action.ActionParameter;
 /**
  * ActionParameter with isSet state, which is used to understand whether ActionParameters are ready (are set) for the call
  */
-public class ValidationActionParameter extends ActionParameter {
+class ValidationActionParameter extends ActionParameter {
 
     /**
      * Denotes whether associated ElementParameter's value is set for the first time. Once it was set it can't be
@@ -34,7 +34,7 @@ public class ValidationActionParameter extends ActionParameter {
      * 
      * @param parameter action method parameter name/path
      */
-    public ValidationActionParameter(final String parameter) {
+    ValidationActionParameter(final String parameter) {
         this(parameter, null);
     }
     
@@ -44,7 +44,7 @@ public class ValidationActionParameter extends ActionParameter {
      * @param parameter action method parameter name/path
      * @param value action method parameter initial value
      */
-    public ValidationActionParameter(final String parameter, final String value) {
+    ValidationActionParameter(final String parameter, final String value) {
         super(parameter, value);
     } 
     
@@ -53,7 +53,7 @@ public class ValidationActionParameter extends ActionParameter {
      * 
      * @return true, if value was set
      */
-    public boolean isSet() {
+    boolean isSet() {
         return isSet;
     }
     

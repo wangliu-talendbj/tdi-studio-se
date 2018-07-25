@@ -44,7 +44,7 @@ public class ValidationListener extends Action implements PropertyChangeListener
                 this::notify);
     }
     
-    protected final boolean areParametersSet() {
+    private final boolean areParametersSet() {
         return parameters.values().stream().flatMap(List::stream).map(ap -> (ValidationActionParameter)ap).allMatch(ValidationActionParameter::isSet);
     }
 
