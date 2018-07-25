@@ -15,6 +15,7 @@
  */
 package org.talend.sdk.component.studio.model.action;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.talend.core.model.utils.ContextParameterUtils;
 
@@ -28,7 +29,7 @@ public class ActionParameter {
     private final String name;
 
     /**
-     * Action parameter alias, which used to make callback
+     * Action parameter name/path. It is used as a key in a Map, which used as action method payload
      */
     private final String parameter;
 
@@ -42,7 +43,32 @@ public class ActionParameter {
      * Parameter value
      */
     private String value;
-
+    
+    /**
+     * Creates ActionParameter
+     * 
+     * @param parameter action method parameter name/path
+     */
+    public ActionParameter(final String parameter) {
+        this(parameter, null);
+    }
+    
+    /**
+     * Creates ActionParameter
+     * 
+     * @param parameter action method parameter name/path
+     * @param value action method parameter initial value
+     */
+    public ActionParameter(final String parameter, final String value) {
+        Objects.requireNonNull(parameter, "parameter should not be null");
+        if (parameter.isEmpty()) {
+            throw new IllegalArgumentException("parameter should not be empty");
+        }
+        this.parameter = parameter;
+        this.value = value;
+        this.name = "";
+    }
+    
     /**
      * Creates ActionParameter
      * 
