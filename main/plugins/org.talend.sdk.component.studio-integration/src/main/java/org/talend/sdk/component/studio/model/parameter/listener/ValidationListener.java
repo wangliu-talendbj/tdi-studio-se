@@ -17,11 +17,13 @@ package org.talend.sdk.component.studio.model.parameter.listener;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.talend.sdk.component.studio.Lookups;
 import org.talend.sdk.component.studio.model.action.Action;
+import org.talend.sdk.component.studio.model.action.ValidationActionParameter;
 import org.talend.sdk.component.studio.model.parameter.ValidationLabel;
 
 public class ValidationListener extends Action implements PropertyChangeListener {
@@ -43,6 +45,10 @@ public class ValidationListener extends Action implements PropertyChangeListener
         CompletableFuture.supplyAsync(this::validate, Lookups.uiActionsThreadPool().getExecutor()).thenAccept(
                 this::notify);
     }
+    
+    protected final boolean areParametersSet() {
+        return parameters.values().stream().flatMap(List::stream).map(ap -> (ValidationActionParameter)ap).allMatch(ValidationActionParameter::isSet);
+    }
 
     private Map<String, String> validate() {
         return callback();
@@ -55,5 +61,5 @@ public class ValidationListener extends Action implements PropertyChangeListener
             label.showValidation(validation.get(MESSAGE));
         }
     }
-
+    
 }

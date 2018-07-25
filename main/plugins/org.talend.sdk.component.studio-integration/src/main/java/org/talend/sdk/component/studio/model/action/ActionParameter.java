@@ -17,7 +17,6 @@ package org.talend.sdk.component.studio.model.action;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
-import org.talend.core.model.utils.ContextParameterUtils;
 
 public class ActionParameter {
 
@@ -27,12 +26,6 @@ public class ActionParameter {
      * Action parameter name/path. It is used as a key in a Map, which used as action method payload
      */
     private final String parameter;
-
-    /**
-     * Denotes whether associated ElementParameter is set and usable. Once set it can't be
-     * unset
-     */
-    private boolean hasDirectValue = false;
 
     /**
      * Parameter value
@@ -60,21 +53,31 @@ public class ActionParameter {
             throw new IllegalArgumentException("parameter should not be empty");
         }
         this.parameter = parameter;
-        setValue(value);
+        setValue0(value);
     }
 
+    /**
+     * Sets ActionParameter new value.
+     * 
+     * @param newValue new value of ActionParameter to be set
+     */
     void setValue(final String newValue) {
+        setValue0(newValue);
+    }
+    
+    /*
+     * a part of Constructor
+     * setValue() method is designed for inheritance, thus it can't be called in Constructor
+     */
+    private void setValue0(final String newValue) {
         if (newValue != null) {
             this.value = removeQuotes(newValue);
-            // todo: if context -> evaluate
-            this.hasDirectValue = !this.value.equals(newValue) || !ContextParameterUtils.containContextVariables(newValue);
         } else {
             this.value = null;
-            this.hasDirectValue = false;
         }
     }
 
-    protected String removeQuotes(final String quotedString) {
+    protected final String removeQuotes(final String quotedString) {
         return QUOTES_PATTERN.matcher(quotedString).replaceAll("");
     }
 
@@ -83,13 +86,6 @@ public class ActionParameter {
      */
     String getParameter() {
         return this.parameter;
-    }
-
-    /**
-     * Denotes whether associated ElementParameter is set and usable. Once set it can't be unset
-     */
-    boolean isHasDirectValue() {
-        return this.hasDirectValue;
     }
 
     /**

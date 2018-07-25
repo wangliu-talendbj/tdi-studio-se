@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.jupiter.api.Test;
 import org.talend.sdk.component.studio.model.action.ActionParameter;
+import org.talend.sdk.component.studio.model.action.ValidationActionParameter;
 import org.talend.sdk.component.studio.model.parameter.ValidationLabel;
 
 class ValidationListenerTest {
@@ -37,7 +38,7 @@ class ValidationListenerTest {
     void simple() throws InterruptedException {
 
         final CountDownLatch latch = new CountDownLatch(1);
-        final ActionParameter param = new ActionParameter("the.test.param.url", null);
+        final ValidationActionParameter param = new ValidationActionParameter("the.test.param.url");
         final ValidationLabel validationLabel = new ValidationLabel(null) {
 
             @Override

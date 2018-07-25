@@ -43,7 +43,7 @@ public class Action {
     /**
      * Action parameters map. Key is an ElementParameter path. Value is a list of action parameters associated with the ElementParameter 
      */
-    private final Map<String, List<ActionParameter>> parameters = new HashMap<>();
+    protected final Map<String, List<ActionParameter>> parameters = new HashMap<>();
     
     public Action(final String actionName, final String family, final Type type) {
         this.actionName = actionName;
@@ -101,10 +101,6 @@ public class Action {
 
     protected final String getType() {
         return this.type;
-    }
-    
-    protected final boolean areParametersSet() {
-        return parameters.values().stream().flatMap(List::stream).allMatch(ActionParameter::isHasDirectValue);
     }
     
     protected final Map<String, String> payload() {

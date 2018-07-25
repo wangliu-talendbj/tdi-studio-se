@@ -25,7 +25,7 @@ import org.talend.designer.core.model.components.ElementParameter;
 import org.talend.sdk.component.server.front.model.ActionReference;
 import org.talend.sdk.component.server.front.model.SimplePropertyDefinition;
 import org.talend.sdk.component.studio.model.action.Action;
-import org.talend.sdk.component.studio.model.action.ActionParameter;
+import org.talend.sdk.component.studio.model.action.ValidationActionParameter;
 import org.talend.sdk.component.studio.model.parameter.PropertyNode;
 import org.talend.sdk.component.studio.model.parameter.TaCoKitElementParameter;
 import org.talend.sdk.component.studio.model.parameter.listener.ValidationListener;
@@ -67,7 +67,7 @@ public class ValidationResolver extends AbstractParameterResolver {
             ep.setRedrawParameter(redrawParameter);
             final String callbackParameter = callbackParameters.get(i).getName();
             final String initialValue = callbackParameters.get(i).getDefaultValue();
-            listener.addParameter(ep.getName(), new ActionParameter(callbackParameter, initialValue));
+            listener.addParameter(ep.getName(), new ValidationActionParameter(callbackParameter, initialValue));
         }
 
     }

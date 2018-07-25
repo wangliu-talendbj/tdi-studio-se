@@ -20,16 +20,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-class ActionParameterTest {
+class ValidationActionParameterTest {
 
-    private final ActionParameter parameter = new ActionParameter("foo.bar");
+    private final ValidationActionParameter parameter = new ValidationActionParameter("foo.bar");
 
     @Test
     void isSetForCode() {
         parameter.setValue("\"context.bar\"");
-        assertTrue(parameter.isHasDirectValue());
+        assertTrue(parameter.isSet());
 
         parameter.setValue("context.bar");
-        assertFalse(parameter.isHasDirectValue());
+        assertFalse(parameter.isSet());
     }
 }
