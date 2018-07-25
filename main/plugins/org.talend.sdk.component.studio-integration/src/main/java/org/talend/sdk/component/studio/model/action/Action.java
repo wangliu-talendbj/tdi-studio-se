@@ -68,6 +68,27 @@ public class Action {
     }
     
     /**
+     * Adds specified ActionParameter {@code parameter} to this Action.
+     * Specified ActionParameter should be unique, i.e. it should have unique parameter name/path 
+     * (e.g. "p1.datastore.url")
+     * 
+     * @param elementParameterName name of ElementParameter which provides value for ActionParameter to be added
+     * @param parameter ActionParameter to be added
+     */
+    public void addParameter(final String elementParameterName, final ActionParameter parameter) {
+        Objects.requireNonNull(elementParameterName, "elementParameterName should not be null");
+        Objects.requireNonNull(parameter, "parameter should not be null");
+        if (elementParameterName.isEmpty()) {
+            throw new IllegalArgumentException("elementParameterName should not be empty");
+        }
+        List<ActionParameter> list = parameters.computeIfAbsent(elementParameterName, k -> new ArrayList<>());
+        if (list.contains(parameter)) {
+            throw new IllegalArgumentException("action already contains parameter " + parameter); 
+        }
+        list.add(parameter);
+    }
+    
+    /**
      * Sets {@code newValue} for all action parameters associated with ElementParameter's {@code parameterName}
      * 
      * @param parameterName ElementParameter name
