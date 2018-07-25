@@ -70,11 +70,11 @@ public class SuggestionsResolver extends AbstractParameterResolver {
             final String absolutePath = pathResolver.resolvePath(getOwnerPath(), relativePaths.get(i));
             final List<TaCoKitElementParameter> parameters = resolveParameters(absolutePath, settings);
             final PropertyDefinitionDecorator parameterRoot = rootParameters.get(i);
-            parameters.forEach(parameter -> {
-                parameter.registerListener(parameter.getName(), updater);
-                final String callbackProperty = parameter.getName().replaceFirst(absolutePath, parameterRoot.getPath());
-                final ActionParameter actionParameter = new ActionParameter(parameter.getName(), callbackProperty, null);
-                updater.getAction().addParameter(actionParameter);
+            parameters.forEach(ep -> {
+                ep.registerListener(ep.getName(), updater);
+                final String callbackParameter = ep.getName().replaceFirst(absolutePath, parameterRoot.getPath());
+                final ActionParameter actionParameter = new ActionParameter(callbackParameter);
+                updater.getAction().addParameter(ep.getName(), actionParameter);
             });
         }
 

@@ -62,12 +62,12 @@ public class ValidationResolver extends AbstractParameterResolver {
         final List<String> relativePaths = actionOwner.getProperty().getValidationParameters();
 
         for (int i = 0; i < relativePaths.size(); i++) {
-            final TaCoKitElementParameter parameter = resolveParameter(relativePaths.get(i), settings);
-            parameter.registerListener(parameter.getName(), listener);
-            parameter.setRedrawParameter(redrawParameter);
+            final TaCoKitElementParameter ep = resolveParameter(relativePaths.get(i), settings);
+            ep.registerListener(ep.getName(), listener);
+            ep.setRedrawParameter(redrawParameter);
             final String callbackParameter = callbackParameters.get(i).getName();
             final String initialValue = callbackParameters.get(i).getDefaultValue();
-            listener.addParameter(new ActionParameter(parameter.getName(), callbackParameter, initialValue));
+            listener.addParameter(ep.getName(), new ActionParameter(callbackParameter, initialValue));
         }
 
     }

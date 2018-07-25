@@ -50,22 +50,6 @@ public class Action {
         this.family = family;
         this.type = type.toString();
     }
-
-    /**
-     * Adds specified {@code parameter} to this Action.
-     * ActionParameter passed should be unique action parameter.
-     * 
-     * @param parameter ActionParameter to be added
-     */
-    public void addParameter(final ActionParameter parameter) {
-        Objects.requireNonNull(parameter, "parameter should not be null");
-        final String elementParameter = parameter.getName();
-        List<ActionParameter> list = parameters.computeIfAbsent(elementParameter, k -> new ArrayList<>());
-        if (list.contains(parameter)) {
-            throw new IllegalArgumentException("action already contains parameter " + parameter); 
-        }
-        list.add(parameter);
-    }
     
     /**
      * Adds specified ActionParameter {@code parameter} to this Action.

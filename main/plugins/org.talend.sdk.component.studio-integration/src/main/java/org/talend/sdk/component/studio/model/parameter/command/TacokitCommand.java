@@ -24,6 +24,9 @@ public interface TacokitCommand {
      */
     void exec();
 
+    @Deprecated
     void addParameter(final ActionParameter parameter);
+    
+    void addParameter(final String elementParameter, final ActionParameter parameter);
 
 }

@@ -76,6 +76,7 @@ public class ActionParameter {
      * @param parameter Action parameter name
      * @param value initial value, can be null. If it's not null, then it switches ActionParameter to set state
      */
+    @Deprecated
     public ActionParameter(final String name, final String parameter, final String value) {
         this.name = name;
         this.parameter = parameter;
