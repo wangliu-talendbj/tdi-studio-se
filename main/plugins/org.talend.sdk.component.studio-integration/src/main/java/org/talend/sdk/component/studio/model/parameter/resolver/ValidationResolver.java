@@ -57,6 +57,7 @@ public class ValidationResolver extends AbstractParameterResolver {
                 .orElseThrow(() -> new IllegalArgumentException("Action with name " + actionName + " wasn't found"));
     }
 
+    @Override
     public void resolveParameters(final Map<String, IElementParameter> settings) {
         final List<SimplePropertyDefinition> callbackParameters = new ArrayList<>(actionRef.getProperties());
         final List<String> relativePaths = actionOwner.getProperty().getValidationParameters();
