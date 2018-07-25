@@ -24,11 +24,6 @@ public class ActionParameter {
     private static final Pattern QUOTES_PATTERN = Pattern.compile("^\"|\"$");
 
     /**
-     * ElementParameter name (which also denotes its path)
-     */
-    private final String name;
-
-    /**
      * Action parameter name/path. It is used as a key in a Map, which used as action method payload
      */
     private final String parameter;
@@ -65,21 +60,6 @@ public class ActionParameter {
             throw new IllegalArgumentException("parameter should not be empty");
         }
         this.parameter = parameter;
-        this.value = value;
-        this.name = "";
-    }
-    
-    /**
-     * Creates ActionParameter
-     * 
-     * @param name ElementParameter name
-     * @param parameter Action parameter name
-     * @param value initial value, can be null. If it's not null, then it switches ActionParameter to set state
-     */
-    @Deprecated
-    public ActionParameter(final String name, final String parameter, final String value) {
-        this.name = name;
-        this.parameter = parameter;
         setValue(value);
     }
 
@@ -96,13 +76,6 @@ public class ActionParameter {
 
     protected String removeQuotes(final String quotedString) {
         return QUOTES_PATTERN.matcher(quotedString).replaceAll("");
-    }
-
-    /**
-     * ElementParameter name (which also denotes its path)
-     */
-    String getName() {
-        return this.name;
     }
 
     /**

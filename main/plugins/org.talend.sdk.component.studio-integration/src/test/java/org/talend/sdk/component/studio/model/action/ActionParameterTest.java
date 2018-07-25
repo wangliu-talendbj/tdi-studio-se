@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 class ActionParameterTest {
 
-    private final ActionParameter parameter = new ActionParameter("foo", "foo.bar", null);
+    private final ActionParameter parameter = new ActionParameter("foo.bar");
 
     @Test
     void isSetForCode() {
