@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.talend.sdk.component.studio.model.action;
+package org.talend.sdk.component.studio.model.parameter.validation;
 
 import org.talend.core.model.utils.ContextParameterUtils;
+import org.talend.sdk.component.studio.model.action.ActionParameter;
 
 /**
  * ActionParameter with isSet state, which is used to understand whether ActionParameters are ready (are set) for the call

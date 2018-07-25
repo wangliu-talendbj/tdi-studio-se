@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.talend.sdk.component.studio.model.parameter.listener;
+package org.talend.sdk.component.studio.model.parameter.validation;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,8 +23,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.talend.sdk.component.studio.Lookups;
 import org.talend.sdk.component.studio.model.action.Action;
-import org.talend.sdk.component.studio.model.action.ValidationActionParameter;
-import org.talend.sdk.component.studio.model.parameter.ValidationLabel;
 
 public class ValidationListener extends Action implements PropertyChangeListener {
 

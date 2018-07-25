@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.talend.sdk.component.studio.model.parameter.listener;
+package org.talend.sdk.component.studio.model.parameter.validation;
 
 import static java.util.Collections.singletonMap;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -29,8 +29,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.jupiter.api.Test;
 import org.talend.sdk.component.studio.model.action.ActionParameter;
-import org.talend.sdk.component.studio.model.action.ValidationActionParameter;
-import org.talend.sdk.component.studio.model.parameter.ValidationLabel;
 
 class ValidationListenerTest {
 

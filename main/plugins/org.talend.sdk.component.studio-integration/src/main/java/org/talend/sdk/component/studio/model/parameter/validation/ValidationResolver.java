@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.talend.sdk.component.studio.model.parameter.resolver;
+package org.talend.sdk.component.studio.model.parameter.validation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,10 +25,9 @@ import org.talend.designer.core.model.components.ElementParameter;
 import org.talend.sdk.component.server.front.model.ActionReference;
 import org.talend.sdk.component.server.front.model.SimplePropertyDefinition;
 import org.talend.sdk.component.studio.model.action.Action;
-import org.talend.sdk.component.studio.model.action.ValidationActionParameter;
 import org.talend.sdk.component.studio.model.parameter.PropertyNode;
 import org.talend.sdk.component.studio.model.parameter.TaCoKitElementParameter;
-import org.talend.sdk.component.studio.model.parameter.listener.ValidationListener;
+import org.talend.sdk.component.studio.model.parameter.resolver.AbstractParameterResolver;
 
 public class ValidationResolver extends AbstractParameterResolver {
 
