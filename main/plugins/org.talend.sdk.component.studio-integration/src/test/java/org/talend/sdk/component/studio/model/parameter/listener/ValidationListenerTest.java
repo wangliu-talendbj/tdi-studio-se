@@ -37,7 +37,7 @@ class ValidationListenerTest {
     void simple() throws InterruptedException {
 
         final CountDownLatch latch = new CountDownLatch(1);
-        final ActionParameter param = new ActionParameter("test", "the.test.param.url", null);
+        final ActionParameter param = new ActionParameter("the.test.param.url", null);
         final ValidationLabel validationLabel = new ValidationLabel(null) {
 
             @Override
@@ -72,7 +72,7 @@ class ValidationListenerTest {
                 }
             }
         };
-        listener.addParameter(param);
+        listener.addParameter("test", param);
 
         listener.propertyChange(new PropertyChangeEvent(new Object(), "test", null, "htt://gateway/api"));
         latch.await(1, MINUTES);
