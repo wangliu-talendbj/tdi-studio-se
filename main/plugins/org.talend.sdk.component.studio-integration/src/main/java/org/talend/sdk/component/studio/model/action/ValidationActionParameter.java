@@ -63,7 +63,7 @@ public class ValidationActionParameter extends ActionParameter {
      * @param newValue new value of ActionParameter to be set
      */
     @Override
-    void setValue(final String newValue) {
+    protected void setValue(final String newValue) {
         if (newValue == null) {
             isSet = false;
         } else {

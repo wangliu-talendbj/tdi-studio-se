@@ -55,13 +55,20 @@ public class ActionParameter {
         this.parameter = parameter;
         setValue0(value);
     }
+    
+    /**
+     * Parameter value
+     */
+    protected String getValue() {
+        return this.value;
+    }
 
     /**
      * Sets ActionParameter new value.
      * 
      * @param newValue new value of ActionParameter to be set
      */
-    void setValue(final String newValue) {
+    protected void setValue(final String newValue) {
         setValue0(newValue);
     }
     
@@ -88,10 +95,4 @@ public class ActionParameter {
         return this.parameter;
     }
 
-    /**
-     * Parameter value
-     */
-    String getValue() {
-        return this.value;
-    }
 }
