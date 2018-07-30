@@ -15,11 +15,13 @@ package org.talend.designer.core.ui.editor.nodes;
 import java.util.List;
 
 import org.eclipse.draw2d.ConnectionRouter;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.GraphicalNodeEditPolicy;
 import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
+import org.talend.core.model.process.ProcessUtils;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.editor.cmd.ConnectionCreateCommand;
 import org.talend.designer.core.ui.editor.cmd.ConnectionReconnectCommand;
@@ -51,7 +53,27 @@ public class NodeGraphicalEditPolicy extends GraphicalNodeEditPolicy {
             return null;
         }
         String style = (String) request.getNewObjectType();
-        ConnectionCreateCommand cmd = new ConnectionCreateCommand(source, style, (List<Object>) request.getNewObject());
+        // Testcase
+        ConnectionCreateCommand cmd = null;
+        EditPart sourceEditPart = request.getSourceEditPart();
+        EditPart targetEditPart = request.getTargetEditPart();
+        if (sourceEditPart != null && targetEditPart != null && sourceEditPart != targetEditPart
+                && sourceEditPart.getModel() instanceof Node && targetEditPart.getModel() instanceof Node) {
+            Node sourceNode = (Node) sourceEditPart.getModel();
+            Node targetNode = (Node) targetEditPart.getModel();
+            if (ProcessUtils.isTestContainer(sourceNode.getProcess()) || ProcessUtils.isTestContainer(targetNode.getProcess())) {
+                cmd = new ConnectionCreateCommand(sourceNode, style, (List<Object>) request.getNewObject());
+                cmd.setTarget(targetNode);
+                if (cmd.canExecute()) {
+                    cmd.execute();
+                } else {
+                    cmd = null;
+                }
+            }
+        }
+        if (cmd == null) {
+            cmd = new ConnectionCreateCommand(source, style, (List<Object>) request.getNewObject());
+        }
         request.setStartCommand(cmd);
         return cmd;
     }
