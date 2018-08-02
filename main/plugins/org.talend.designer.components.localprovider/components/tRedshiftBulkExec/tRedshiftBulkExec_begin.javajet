@@ -275,8 +275,8 @@ skeleton="../templates/db_output_bulk.skeleton"
 	}
 	boolean encrypt = "true".equals(ElementParameterParser.getValue(node, "__ENCRYPT__"));
 	encrypt = encrypt && s3Mode;
-	String encryptionKeyPropertyName = "__ENCRYPTED_KEY__";
 	if(encrypt) {
+		String encryptionKeyPropertyName = "__ENCRYPTED_KEY__";
 %>
 		.append(";master_symmetric_key=")
 <%
