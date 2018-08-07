@@ -118,6 +118,10 @@
            class="org.talend.sdk.component.studio.service.TaCoKitService"
            serviceId="ITaCoKitService">
      </Service>
+     <Service
+           class="org.talend.sdk.component.studio.service.TaCoKitUpdateService"
+           serviceId="ITaCoKitUpdateService">
+     </Service>
   </extension>
   <extension
         point="org.talend.designer.core.generators">
