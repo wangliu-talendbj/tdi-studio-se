@@ -21,13 +21,11 @@ import org.talend.core.model.process.IElementParameter;
 import org.talend.sdk.component.server.front.model.ActionReference;
 import org.talend.sdk.component.studio.model.action.Action;
 import org.talend.sdk.component.studio.model.parameter.PropertyNode;
+import org.talend.sdk.component.studio.model.parameter.TableElementParameter;
 import org.talend.sdk.component.studio.model.parameter.listener.ActionParametersUpdater;
 import org.talend.sdk.component.studio.test.TestComponent;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,7 +46,8 @@ class SuggestionsResolverTest {
 
         final PropertyNode actionOwner = component.getNode("conf.basedOnTwoPrimitives");
         final Collection<ActionReference> actions = component.getActions();
-        final ActionParametersUpdater listener = createActionParametersUpdater();
+        final ActionReference actionRef = component.getAction("basedOnTwoPrimitives");
+        final ActionParametersUpdater listener = createActionParametersUpdater(actionRef);
         final SuggestionsResolver resolver = new SuggestionsResolver(actionOwner, actions, listener);
 
         final Map<String, IElementParameter> settings = component.getSettings();
@@ -69,7 +68,8 @@ class SuggestionsResolverTest {
 
         final PropertyNode actionOwner = component.getNode("conf.basedOnComplex");
         final Collection<ActionReference> actions = component.getActions();
-        final ActionParametersUpdater listener = createActionParametersUpdater();
+        final ActionReference actionRef = component.getAction("basedOnComplex");
+        final ActionParametersUpdater listener = createActionParametersUpdater(actionRef);
         final SuggestionsResolver resolver = new SuggestionsResolver(actionOwner, actions, listener);
 
         final Map<String, IElementParameter> settings = component.getSettings();
@@ -80,8 +80,57 @@ class SuggestionsResolverTest {
         assertEquals(expectedPayload, action.checkPayload());
     }
 
-    private ActionParametersUpdater createActionParametersUpdater() {
-        final ActionReference action = component.getAction("basedOnTwoPrimitives");
+    @Test
+    public void testResolveParametersTable() {
+        Map<String, String> expectedPayload = new HashMap<>();
+        expectedPayload.put("table[0].check", "true");
+        expectedPayload.put("table[0].number", "1");
+        expectedPayload.put("table[0].operator", "GREATER");
+        expectedPayload.put("table[0].strColumn", "Talend");
+        expectedPayload.put("table[1].check", "false");
+        expectedPayload.put("table[1].number", "2");
+        expectedPayload.put("table[1].operator", "LESS");
+        expectedPayload.put("table[1].strColumn", "The best");
+
+        final PropertyNode actionOwner = component.getNode("conf.basedOnTable");
+        final Collection<ActionReference> actions = component.getActions();
+        final ActionReference actionRef = component.getAction("basedOnTable");
+        final ActionParametersUpdater listener = createActionParametersUpdater(actionRef);
+        final SuggestionsResolver resolver = new SuggestionsResolver(actionOwner, actions, listener);
+
+        final Map<String, IElementParameter> settings = component.getSettings();
+        final TableElementParameter tableParam = createTableParameter();
+        settings.put("conf.table", tableParam);
+
+        resolver.resolveParameters(settings);
+
+        final ActionMock action = (ActionMock) listener.getAction();
+        assertEquals(expectedPayload, action.checkPayload());
+    }
+
+    private TableElementParameter createTableParameter() {
+
+        final List<Map<String, Object>> tableValue = new ArrayList<>();
+        final Map<String, Object> row1 = new HashMap<>();
+        row1.put("check", true);
+        row1.put("number", 1);
+        row1.put("operator", "GREATER");
+        row1.put("strColumn", "Talend");
+        tableValue.add(row1);
+        final Map<String, Object> row2 = new HashMap<>();
+        row2.put("check", false);
+        row2.put("number", 2);
+        row2.put("operator", "LESS");
+        row2.put("strColumn", "The best");
+        tableValue.add(row2);
+
+        final TableElementParameter tableParam = new TableElementParameter(null);
+        tableParam.setName("conf.table");
+        tableParam.setValue(tableValue);
+        return tableParam;
+    }
+
+    private ActionParametersUpdater createActionParametersUpdater(final ActionReference action) {
         final Action actionMock = new ActionMock(action.getName(), action.getFamily(), Action.Type.SUGGESTIONS);
         return new ActionParametersUpdater(actionMock);
     }
