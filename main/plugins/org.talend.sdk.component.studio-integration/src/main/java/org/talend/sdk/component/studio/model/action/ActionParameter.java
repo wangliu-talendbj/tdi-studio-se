@@ -15,10 +15,13 @@
  */
 package org.talend.sdk.component.studio.model.action;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.talend.core.model.utils.ContextParameterUtils;
+import org.talend.sdk.component.studio.lang.Pair;
 
-public class ActionParameter {
+public class ActionParameter implements IActionParameter {
 
     private static final Pattern QUOTES_PATTERN = Pattern.compile("^\"|\"$");
 
@@ -97,5 +100,11 @@ public class ActionParameter {
      */
     String getValue() {
         return this.value;
+    }
+
+    @Override
+    public List<Pair<String, String>> parameters() {
+        final Pair parameter = new Pair(getParameter(), getValue());
+        return Collections.singletonList(parameter);
     }
 }
