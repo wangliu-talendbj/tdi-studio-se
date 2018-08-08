@@ -104,9 +104,12 @@ public class Action {
     
     protected final Map<String, String> payload() {
         final Map<String, String> payload = new HashMap<>();
-        parameters.values().stream().flatMap(List::stream).forEach(actionParameter -> {
-            payload.put(actionParameter.getParameter(), actionParameter.getValue());
-        });
+        parameters.values().stream()
+                .flatMap(List::stream)
+                .flatMap(actionParam -> actionParam.parameters().stream())
+                .forEach(param -> {
+                    payload.put(param.getFirst(), param.getSecond());
+                 });
         return payload;
     }
     
