@@ -156,7 +156,7 @@
         {
           "displayName": "xPort",
           "metadata": {
-            "definition::parametsuggestionser::index": "2"
+            "definition::parameter::index": "2"
           },
           "name": "xPort",
           "path": "xPort",
