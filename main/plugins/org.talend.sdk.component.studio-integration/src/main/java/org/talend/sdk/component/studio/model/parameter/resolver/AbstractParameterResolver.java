@@ -6,6 +6,7 @@ import org.talend.sdk.component.server.front.model.ActionReference;
 import org.talend.sdk.component.server.front.model.SimplePropertyDefinition;
 import org.talend.sdk.component.studio.model.action.Action;
 import org.talend.sdk.component.studio.model.action.ActionParameter;
+import org.talend.sdk.component.studio.model.action.IActionParameter;
 import org.talend.sdk.component.studio.model.parameter.PropertyDefinitionDecorator;
 import org.talend.sdk.component.studio.model.parameter.PropertyNode;
 import org.talend.sdk.component.studio.model.parameter.TaCoKitElementParameter;
@@ -78,8 +79,7 @@ abstract class AbstractParameterResolver implements ParameterResolver {
                         parameter.setRedrawParameter(redrawParameter);
                     }
                     final String callbackProperty = parameter.getName().replaceFirst(absolutePath, parameterRoot.getPath());
-                    final String defaultValue = parameter.getStringValue();
-                    final ActionParameter actionParameter = new ActionParameter(parameter.getName(), callbackProperty, defaultValue);
+                    final IActionParameter actionParameter = parameter.createActionParameter(callbackProperty);
                     action.addParameter(actionParameter);
                 });
             }

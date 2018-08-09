@@ -59,7 +59,8 @@ public class ActionParameter implements IActionParameter {
         setValue(value);
     }
 
-    void setValue(final String newValue) {
+    @Override
+    public void setValue(final String newValue) {
         if (newValue != null) {
             this.value = removeQuotes(newValue);
             // todo: if context -> evaluate
@@ -91,7 +92,8 @@ public class ActionParameter implements IActionParameter {
     /**
      * Denotes whether associated ElementParameter is set and usable. Once set it can't be unset
      */
-    boolean isHasDirectValue() {
+    @Override
+    public boolean isHasDirectValue() {
         return this.hasDirectValue;
     }
 
