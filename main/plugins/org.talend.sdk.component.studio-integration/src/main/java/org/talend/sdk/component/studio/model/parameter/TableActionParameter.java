@@ -1,6 +1,7 @@
 package org.talend.sdk.component.studio.model.parameter;
 
 import org.talend.sdk.component.studio.lang.Pair;
+import org.talend.sdk.component.studio.lang.Strings;
 import org.talend.sdk.component.studio.model.action.ActionParameter;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ class TableActionParameter extends ActionParameter {
                 for(Map.Entry<String, String> entry : row.entrySet()) {
                     final String key = entry.getKey().replace("[]", "[" + i + "]")
                             .replace(elementParameter.getName(), getParameter());
-                    final String paramValue = removeQuotes(entry.getValue());
+                    final String paramValue = Strings.removeQuotes(entry.getValue());
                     final Pair parameter = new Pair(key, paramValue);
                     parameters.add(parameter);
                 }

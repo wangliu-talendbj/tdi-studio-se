@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.sdk.component.studio.lang.Pair;
+import org.talend.sdk.component.studio.lang.Strings;
 
 public class ActionParameter implements IActionParameter {
 
@@ -62,17 +63,13 @@ public class ActionParameter implements IActionParameter {
     @Override
     public void setValue(final String newValue) {
         if (newValue != null) {
-            this.value = removeQuotes(newValue);
+            this.value = Strings.removeQuotes(newValue);
             // todo: if context -> evaluate
             this.hasDirectValue = !this.value.equals(newValue) || !ContextParameterUtils.containContextVariables(newValue);
         } else {
             this.value = null;
             this.hasDirectValue = false;
         }
-    }
-
-    protected String removeQuotes(final String quotedString) {
-        return QUOTES_PATTERN.matcher(quotedString).replaceAll("");
     }
 
     /**
