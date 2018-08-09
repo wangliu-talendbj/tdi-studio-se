@@ -312,12 +312,12 @@
 
         java.time.temporal.TemporalAccessor testDate = null;
         try {
-                testDate = formatter.parse(stringDate);
+            testDate = formatter.parse(stringDate);
         } catch (java.time.format.DateTimeParseException e) {
-        throw new IllegalArgumentException("Data format not matches");
-    }
+            throw new IllegalArgumentException("Data format not matches");
+        }
         String formatDate = formatter.format(testDate);
-    ifPassedThrough = formatDate.equalsIgnoreCase(stringDate);
+        ifPassedThrough = formatDate.equalsIgnoreCase(stringDate);
 <%
                     } //CONDITION_001512 STOP
 %>
