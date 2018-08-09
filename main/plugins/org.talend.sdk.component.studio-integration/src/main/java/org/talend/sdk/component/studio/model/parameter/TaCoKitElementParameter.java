@@ -43,6 +43,10 @@ public class TaCoKitElementParameter extends ElementParameter implements IAdditi
 
     private Map<String, Object> additionalInfoMap = new HashMap<>();
 
+    public TaCoKitElementParameter() {
+        this(null);
+    }
+
     /**
      * Sets tagged value "org.talend.sdk.component.source", which is used in code generation to recognize component type
      *
@@ -85,7 +89,7 @@ public class TaCoKitElementParameter extends ElementParameter implements IAdditi
         pcs.firePropertyChange(name, oldValue, newValue);
     }
 
-    public void fireValueChange(final Object oldValue, final Object newValue) {
+    void fireValueChange(final Object oldValue, final Object newValue) {
         for (final IValueChangedListener listener : valueChangeListeners) {
             listener.onValueChanged(this, oldValue, newValue);
         }
@@ -177,6 +181,7 @@ public class TaCoKitElementParameter extends ElementParameter implements IAdditi
 
     /**
      * Sets parameter value and fires parameter change event, which is handled by registered listeners.
+     * Note, parameter change event is fired with value converted to String by calling {@link #getStringValue()} method
      * Subclasses should extend (override and call super.setValue()) this method to provide correct conversion, when
      * they use other value type than String.
      *
@@ -186,7 +191,7 @@ public class TaCoKitElementParameter extends ElementParameter implements IAdditi
     public void setValue(final Object newValue) {
         final Object oldValue = super.getValue();
         super.setValue(newValue);
-        firePropertyChange(getName(), oldValue, newValue);
+        firePropertyChange("value", oldValue, getStringValue());
         fireValueChange(oldValue, newValue);
         redraw();
     }
@@ -194,14 +199,14 @@ public class TaCoKitElementParameter extends ElementParameter implements IAdditi
     public void updateValueOnly(final Object newValue) {
         super.setValue(newValue);
     }
-    
+
     /**
      * Denotes whether parameter should be persisted in the repository.
      * Default (this) implementation returns {@code true}, however it can be overridden
-     * 
+     *
      * @return true
      */
     public boolean isPersisted() {
-       return true; 
+        return true;
     }
 }
