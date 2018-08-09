@@ -15,8 +15,8 @@
  */
 package org.talend.sdk.component.studio.model.action;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.regex.Pattern;
 import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.sdk.component.studio.lang.Pair;
@@ -85,7 +85,7 @@ public class ActionParameter implements IActionParameter {
     /**
      * Action parameter alias, which used to make callback
      */
-    String getParameter() {
+    protected String getParameter() {
         return this.parameter;
     }
 
@@ -105,7 +105,7 @@ public class ActionParameter implements IActionParameter {
     }
 
     @Override
-    public List<Pair<String, String>> parameters() {
+    public Collection<Pair<String, String>> parameters() {
         final Pair parameter = new Pair(getParameter(), getValue());
         return Collections.singletonList(parameter);
     }

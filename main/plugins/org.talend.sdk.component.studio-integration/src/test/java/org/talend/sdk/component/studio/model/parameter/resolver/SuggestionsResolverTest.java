@@ -110,18 +110,18 @@ class SuggestionsResolverTest {
 
     private TableElementParameter createTableParameter() {
 
-        final List<Map<String, Object>> tableValue = new ArrayList<>();
-        final Map<String, Object> row1 = new HashMap<>();
-        row1.put("check", true);
-        row1.put("number", 1);
-        row1.put("operator", "GREATER");
-        row1.put("strColumn", "Talend");
+        final List<Map<String, String>> tableValue = new ArrayList<>();
+        final Map<String, String> row1 = new HashMap<>();
+        row1.put("conf.table[].check", "true");
+        row1.put("conf.table[].number", "1");
+        row1.put("conf.table[].operator", "GREATER");
+        row1.put("conf.table[].strColumn", "Talend");
         tableValue.add(row1);
-        final Map<String, Object> row2 = new HashMap<>();
-        row2.put("check", false);
-        row2.put("number", 2);
-        row2.put("operator", "LESS");
-        row2.put("strColumn", "The best");
+        final Map<String, String> row2 = new HashMap<>();
+        row2.put("conf.table[].check", "false");
+        row2.put("conf.table[].number", "2");
+        row2.put("conf.table[].operator", "LESS");
+        row2.put("conf.table[].strColumn", "The best");
         tableValue.add(row2);
 
         final TableElementParameter tableParam = new TableElementParameter(null);

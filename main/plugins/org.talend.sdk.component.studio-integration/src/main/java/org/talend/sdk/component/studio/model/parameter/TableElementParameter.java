@@ -15,13 +15,11 @@
  */
 package org.talend.sdk.component.studio.model.parameter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.talend.core.model.process.IElement;
+import org.talend.sdk.component.studio.lang.Pair;
+import org.talend.sdk.component.studio.model.action.IActionParameter;
 
 /**
  * Represents Table parameter. Table parameter is ElementParameter, which EParameterFieldType is TABLE
@@ -121,6 +119,12 @@ public class TableElementParameter extends TaCoKitElementParameter {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public IActionParameter createActionParameter(final String actionParameter) {
+        final TableActionParameter parameter = new TableActionParameter(this, actionParameter);
+        return parameter;
     }
 
 }
