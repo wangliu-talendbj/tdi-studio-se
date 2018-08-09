@@ -15,11 +15,14 @@
  */
 package org.talend.sdk.component.studio.model.parameter;
 
-import java.util.*;
-
 import org.talend.core.model.process.IElement;
-import org.talend.sdk.component.studio.lang.Pair;
 import org.talend.sdk.component.studio.model.action.IActionParameter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Represents Table parameter. Table parameter is ElementParameter, which EParameterFieldType is TABLE
